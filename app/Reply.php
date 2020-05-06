@@ -26,6 +26,11 @@ class Reply extends Model
 
         self::deleting(function ($reply) {
             $reply->favorites->each->delete();
+            $reply->thread->decrement('replies_count');
+        });
+
+        self::created(function($reply){
+            $reply->thread->increment('replies_count');
         });
     }
 

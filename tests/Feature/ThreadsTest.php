@@ -30,16 +30,6 @@ class ThreadsTest extends TestCase
         $response->assertSee($this->thread->title);
     }
 
-
-    public function test_user_can_read_replies_associated_with_thread()
-    {
-        $reply = create('App\Reply', ['thread_id' => $this->thread->id]);
-        // When we visit a thread page
-        $respose = $this->get($this->thread->path());
-        // Then we should see the replies
-        $respose->assertSee($reply->body);
-    }
-
     public function test_user_can_filter_threads_by_channel()
     {
         $channel = create('App\Channel');
@@ -78,6 +68,17 @@ class ThreadsTest extends TestCase
         $response = $this->getJson(url('threads?popular=1'))->json();
         $this->assertEquals([3, 2, 0], array_column($response, 'replies_count'));
     }
+    
+    public function test_user_can_filter_threads_that_are_unanswered()
+    {
+        $thread = create('App\Thread');
+        create('App\Reply', ['thread_id' => $thread->id]);
+
+        $response = $this->getJson(url('threads?unanswered=1'))->json();
+
+        $this->assertCount(1, $response);
+
+    }
 
     public function test_user_can_request_all_replies_for_a_given_thread()
     {
@@ -86,7 +87,8 @@ class ThreadsTest extends TestCase
 
         $response = $this->getJson($threadWithTwoReplies->path() . '/replies')->json();
         
-        $this->assertCount(1, $response['data']);
+        $this->assertCount(2, $response['data']);
         $this->assertEquals(2, $response['total']);
     }
+ 
 }

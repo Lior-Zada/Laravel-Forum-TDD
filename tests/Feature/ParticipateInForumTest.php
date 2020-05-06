@@ -20,7 +20,7 @@ class ParticipateInForumTest extends TestCase
             ->assertRedirect('/login');
     }
 
-    public function test_user_can_add_replies(){
+    public function test_authenticated_user_can_add_replies(){
 
         $this->signIn();
         
@@ -31,8 +31,9 @@ class ParticipateInForumTest extends TestCase
         
         $this->post($thread->path().'/replies', $reply->toArray());
         
-        $this->get($thread->path())
-            ->assertSee($reply->body);
+        $this->assertDatabaseHas('replies', ['body'=>$reply->body]);
+        // Must get fresh instance of $thread because we've updated it behind the scences
+        $this->assertEquals(1,  $thread->fresh()->replies_count);
     }
 
     public function test_a_reply_requires_body()
@@ -73,6 +74,8 @@ class ParticipateInForumTest extends TestCase
         $this->assertDatabaseMissing('replies', [
             'id'=> $reply->id
         ]);
+            
+        $this->assertEquals(0, $reply->thread->fresh()->replies_count);
     }
 
     public function test_unauthorized_user_cannot_update_a_reply() 

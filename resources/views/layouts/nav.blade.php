@@ -18,10 +18,11 @@
 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{url('/threads')}}">{{ __('All Threads') }}</a>
-                        @if(auth()->check())
+                        @auth
                         <a class="dropdown-item" href="{{url('threads?by=' . auth()->user()->name)}}">{{ __('My Threads') }}</a>
-                        @endif
+                        @endauth
                         <a class="dropdown-item" href="{{url('/threads?popular=1')}}">{{ __('Popular Threads') }}</a>
+                        <a class="dropdown-item" href="{{url('/threads?unanswered=1')}}">{{ __('Unanswered Threads') }}</a>
                     </div>
                 </li>
 

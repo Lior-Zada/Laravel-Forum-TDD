@@ -19,9 +19,10 @@ class Thread extends Model
 
         // its a query scope, that is automatically applied to all of the queries.
         // If you want to disable it for your query, use "->withoutGlobalScopes()"
-        self::addGlobalScope('replyCount', function($builder){
-            return $builder->withCount('replies');
-        });
+        // This is now stored at the database instead
+        // self::addGlobalScope('replyCount', function($builder){
+        //     return $builder->withCount('replies');
+        // });
 
         // Register a model event that occurs on deleting, when you delete a thread, also delete it's associated replies
         self::deleting(function($thread){
@@ -48,6 +49,7 @@ class Thread extends Model
 
     public function addReply($reply)
     {
+        // $this->increment('replies_count'); // It is an option, but we'll use model event.
         return $this->replies()->create($reply);
     }
 

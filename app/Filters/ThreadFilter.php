@@ -10,7 +10,7 @@ use App\Filters\Filter;
 class ThreadFilter extends Filter{
 
 
-    protected $filters = ['by', 'popular'];
+    protected $filters = ['by', 'popular', 'unanswered'];
 
     /**
      * Filter the query by a given username
@@ -32,6 +32,15 @@ class ThreadFilter extends Filter{
     public function popular()
     {
         return $this->builder->reorder('replies_count', 'desc');
+    }
+
+    /**
+     * Filter the query to receive threads that are unanswered.
+     * @return Builder 
+     */
+    public function unanswered()
+    {
+        return $this->builder->where('replies_count', 0);
     }
 
 }

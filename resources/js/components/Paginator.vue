@@ -55,7 +55,17 @@ export default {
     },
 
     preserveQueryString() {
-      return location.search.replace(/page=(\d+)/, `page=${this.page}`);
+      let query = location.search.match(/page=(\d+)/);
+      let string = `page=${this.page}`;
+      let queryStringExists = location.search.match(/\?/);
+     
+     if (query){
+        return location.search.replace(/page=(\d+)/, string);
+      }else if(queryStringExists){
+        return string;
+      }else{
+        return `?${string}`;
+      }
     }
   }
 };

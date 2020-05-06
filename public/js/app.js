@@ -2131,7 +2131,17 @@ __webpack_require__.r(__webpack_exports__);
       history.pushState(null, null, this.preserveQueryString());
     },
     preserveQueryString: function preserveQueryString() {
-      return location.search.replace(/page=(\d+)/, "page=".concat(this.page));
+      var query = location.search.match(/page=(\d+)/);
+      var string = "page=".concat(this.page);
+      var queryStringExists = location.search.match(/\?/);
+
+      if (query) {
+        return location.search.replace(/page=(\d+)/, string);
+      } else if (queryStringExists) {
+        return string;
+      } else {
+        return "?".concat(string);
+      }
     }
   }
 });
@@ -2197,6 +2207,7 @@ __webpack_require__.r(__webpack_exports__);
       var data = _ref.data;
       this.dataSet = data;
       this.items = data.data;
+      window.scrollTo(0, 0);
     }
   }
 });
