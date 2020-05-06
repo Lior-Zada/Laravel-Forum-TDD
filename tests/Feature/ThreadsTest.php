@@ -40,45 +40,53 @@ class ThreadsTest extends TestCase
         $respose->assertSee($reply->body);
     }
 
-   public function test_user_can_filter_threads_by_channel()
-   {
-       $channel = create('App\Channel');
+    public function test_user_can_filter_threads_by_channel()
+    {
+        $channel = create('App\Channel');
 
-       $threadInChannel = create('App\Thread', ['channel_id' => $channel->id]);
-       $threadNotInChannel = create('App\Thread');
+        $threadInChannel = create('App\Thread', ['channel_id' => $channel->id]);
+        $threadNotInChannel = create('App\Thread');
 
-       $this->get(url('/threads/' . $channel->slug))
-           ->assertSee($threadInChannel->title)
+        $this->get(url('/threads/' . $channel->slug))
+            ->assertSee($threadInChannel->title)
             ->assertDontSee($threadNotInChannel->title);
-   }
+    }
 
-   public function test_a_user_can_filter_threads_by_any_username()
-   {
-       $this->signIn(create('App\User', ['name' => 'LiorZada']));
-    
-       $threadByLior = create('App\Thread', ['user_id' => auth()->id()]);
-       $threadNotByLior = create('App\Thread');
+    public function test_a_user_can_filter_threads_by_any_username()
+    {
+        $this->signIn(create('App\User', ['name' => 'LiorZada']));
 
-       $this->get(url('threads?by=LiorZada'))
-        ->assertSee($threadByLior->title)
-        ->assertDontSee($threadNotByLior->title);
+        $threadByLior = create('App\Thread', ['user_id' => auth()->id()]);
+        $threadNotByLior = create('App\Thread');
 
-   }
+        $this->get(url('threads?by=LiorZada'))
+            ->assertSee($threadByLior->title)
+            ->assertDontSee($threadNotByLior->title);
+    }
 
-   public function test_a_user_can_filter_threads_by_popularity()
-   {
-       $this->withoutExceptionHandling();
-       $threadWithTwoReplies = create('App\Thread');
-       create('App\Reply', ['thread_id' => $threadWithTwoReplies->id], 2);
+    public function test_a_user_can_filter_threads_by_popularity()
+    {
+        $this->withoutExceptionHandling();
+        $threadWithTwoReplies = create('App\Thread');
+        create('App\Reply', ['thread_id' => $threadWithTwoReplies->id], 2);
 
-       $threadWithThreeReplies = create('App\Thread');
-       create('App\Reply', ['thread_id' => $threadWithThreeReplies->id], 3);
+        $threadWithThreeReplies = create('App\Thread');
+        create('App\Reply', ['thread_id' => $threadWithThreeReplies->id], 3);
 
-       $threadWithZeroReplies = $this->thread;
+        $threadWithZeroReplies = $this->thread;
 
-       $response = $this->getJson(url('threads?popular=1'))->json();
-       $this->assertEquals([3,2,0], array_column($response, 'replies_count'));
-   }
+        $response = $this->getJson(url('threads?popular=1'))->json();
+        $this->assertEquals([3, 2, 0], array_column($response, 'replies_count'));
+    }
 
+    public function test_user_can_request_all_replies_for_a_given_thread()
+    {
+        $threadWithTwoReplies = create('App\Thread');
+        create('App\Reply', ['thread_id' => $threadWithTwoReplies->id], 2);
 
+        $response = $this->getJson($threadWithTwoReplies->path() . '/replies')->json();
+        
+        $this->assertCount(1, $response['data']);
+        $this->assertEquals(2, $response['total']);
+    }
 }

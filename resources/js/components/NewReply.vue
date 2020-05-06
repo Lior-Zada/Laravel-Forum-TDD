@@ -27,7 +27,6 @@
 
 <script>
 export default {
-    props: ['endpoint'],
 
     computed: {
         signedIn(){
@@ -42,7 +41,7 @@ export default {
 
   methods: {
     addReply() {
-      axios.post(this.endpoint, { body: this.body }).then(response => {
+      axios.post( `${location.pathname}/replies`, { body: this.body }).then(response => {
         this.body = "";
 
         flash("Your reply was posted successfully.");

@@ -5,7 +5,7 @@
       <div class="level">
         <div class="flex">
           <a :href="`/profile/${data.owner.name}`" v-text="data.owner.name"></a>
-          replied {{data.created_at}}
+          replied <span v-text="ago"></span> 
         </div>
         
         <favorite :reply="data" v-if="signedIn"></favorite>
@@ -50,6 +50,7 @@
 <script>
 // Because we use <favorite> within <reply> we import it here instead as global
 import Favorite from "./Favorite.vue";
+import moment from 'moment';
 
 export default {
   props: ["data"],
@@ -61,9 +62,11 @@ export default {
       return window.App.signedIn;
     },
     canUpdate(){
-    
       return this.authorize(user => this.data.user_id == window.App.user.id);
       // return this.data.user_id == window.App.user.id;
+    },
+    ago(){
+      return moment(this.data.created_at).fromNow() + '...';
     }
   },
 

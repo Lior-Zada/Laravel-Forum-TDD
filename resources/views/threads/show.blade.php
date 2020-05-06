@@ -40,14 +40,14 @@
                 </div>
 
                 <br>
-                <replies :data="{{$thread->replies}}" @removed="repliesCount--" @added="repliesCount++"></replies>
+                <replies @removed="repliesCount--" @added="repliesCount++"></replies>
 
-                <!-- Laravel commentted, using <replies></replies> instead -->
+                <!-- Will use <replies> component instead -->
                 {{-- @foreach($replies as $reply)
                      @include('threads.reply')
                      @endforeach --}}
 
-                <!-- Laravel commentted -->
+                <!-- Will use frontend pagination instead -->
                 {{-- {{$replies->links()}} --}}
 
 
