@@ -1,0 +1,39 @@
+To run when phpunit isn't working globally, run the laravel phpunit:
+./vendor/bin/phpunit
+
+1.php artisan tinker
+2.$threads = factory('App\Thread', 50)->create()
+3.$threads->each(function($thread) { factory('App\Reply', 10)->create(['thread_id' => $thread->id]); });
+
+
+// Create a feature test
+php artisan make:test ThreadsTest
+
+//Create a unit test
+php artisan make:test ReplyTest --unit
+
+php artisan migrate        
+
+//Make model with -m (migration) -c (controller)
+php artisan make:model Reply -mc
+//Make model with -m (migration) -r (resourcesful controller)
+php artisan make:model Thread -mr
+
+// run DatabaseSeeder.php
+php artisan db:seed
+
+//Add this to \app\Exceptions\Handler.php @render() 
+if(app()->environment() === 'testing') throw $exception;
+
+
+//https://laravel.com/docs/7.x/authentication
+// Create authentication
+composer require laravel/ui
+php artisan ui vue --auth
+
+
+// Create policies to authorize user actions.
+// you can specifiy the model to get some boilerplate on the policy
+php artisan make:policy ThreadPolicy --model=Thread
+
+

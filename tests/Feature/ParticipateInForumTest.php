@@ -1,0 +1,109 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class ParticipateInForumTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function setUp():void
+    {
+        parent::setUp();
+    }
+    public function test_guest_cannot_add_replies(){
+
+        $this->post('threads/test-channel/1/replies', [])
+            ->assertRedirect('/login');
+    }
+
+    public function test_user_can_add_replies(){
+
+        $this->signIn();
+        
+        $thread = create('App\Thread');
+        
+        // make() -save to memory, create() -save to database
+        $reply = make('App\Reply'); 
+        
+        $this->post($thread->path().'/replies', $reply->toArray());
+        
+        $this->get($thread->path())
+            ->assertSee($reply->body);
+    }
+
+    public function test_a_reply_requires_body()
+    {
+        $this->signIn();
+
+        $thread = create('App\Thread');
+
+        $reply = make('App\Reply', ['body' => null]);
+        
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->assertSessionHasErrors(['body']);
+    }
+
+    public function test_unauthorized_user_cannot_delete_reply()
+    {
+        $reply = create('App\Reply');
+
+        $this->delete("replies/$reply->id")
+            ->assertRedirect('/login');
+
+
+        $this->signIn()
+            ->delete("replies/$reply->id")
+            ->assertStatus(403);
+    }
+
+    public function test_authorized_user_can_delete_reply() 
+    {
+        $this->signIn();
+        $user_id = auth()->id();
+        
+        $reply = create('App\Reply', ['user_id' => $user_id]);
+
+        // 302 "Found" is common for performing redirect
+        $this->delete("replies/$reply->id")->assertStatus(302);
+            
+        $this->assertDatabaseMissing('replies', [
+            'id'=> $reply->id
+        ]);
+    }
+
+    public function test_unauthorized_user_cannot_update_a_reply() 
+    {
+        $reply = create('App\Reply');
+        
+        $this->patch("/replies/$reply->id")
+            ->assertRedirect('/login');
+
+        $this->signIn()
+            ->patch("/replies/$reply->id", ['body'=>'test'])
+            ->assertStatus(403);
+    }
+
+    public function test_authorized_user_can_update_a_reply() 
+    {
+        $this->signIn();
+        
+        $user_id = auth()->id();
+        
+        $reply = create('App\Reply', ['user_id' => $user_id, 'body' => 'former-body']);
+        
+        $updatedReply = 'body-changed!';
+
+        $this->patch("/replies/$reply->id", [
+            'body' => $updatedReply
+        ]);
+
+        $this->assertDatabaseHas('replies',[
+            'id' => $reply->id,
+            'body' => $updatedReply
+        ]);
+    }
+}
