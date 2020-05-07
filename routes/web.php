@@ -42,5 +42,9 @@ Route::delete('/replies/{reply}/favorites' , 'FavoritesController@destroy');
 //  (you dont have to specify $item->name, laravel knows what to take.)
 Route::get('/profiles/{user:name}', 'ProfilesController@show')->name('profile');
 
+Route::get('/profiles/{user:name}/notifications', 'UserNotificationsController@index');
+Route::delete('/profiles/{user:name}/notifications/{notification}', 'UserNotificationsController@destroy');
+
+
 
 

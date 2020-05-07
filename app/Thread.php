@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Model;
 use  App\Traits\RecordsActivity;
 
@@ -51,7 +52,14 @@ class Thread extends Model
     public function addReply($reply)
     {
         // $this->increment('replies_count'); // It is an option, but we'll use model event.
-        return $this->replies()->create($reply);
+        $reply = $this->replies()->create($reply);
+
+        //https://laravel.com/docs/7.x/collections#method-filter
+        $this->subscriptions->filter(function($sub) use($reply){
+            return $sub->user_id != $reply->user_id;
+        })->each->notify($reply);
+  
+        return $reply;
     }
 
     public function channel()
@@ -69,6 +77,8 @@ class Thread extends Model
         $this->subscriptions()->create([
             'user_id' => $userId ?: auth()->id(),
         ]);
+
+        return $this;
     }
 
     public function unsubscribe($userId = null)
@@ -81,6 +91,10 @@ class Thread extends Model
     public function subscriptions()
     {
         return $this->hasMany(ThreadSubscription::class);
+    }
+
+    public function isSubscribedTo(){
+        return $this->getIsSubscribedToAttribute();
     }
 
     public function getIsSubscribedToAttribute()

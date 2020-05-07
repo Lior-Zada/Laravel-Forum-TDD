@@ -11,23 +11,16 @@ class SubscribeToThreadTest extends TestCase
     use RefreshDatabase;
    
     public function test_user_can_subscribe_to_threads()
-    {
+    {   
         $this->signIn();
     
         $thread = create('App\Thread');
     
-        $thread->post($thread->path() . '/subscriptions');
-    
-        $thread->addReply([
-            'user_id'=> auth()->id(),
-            'body' => 'Reply added!'
-        ]);
+        $this->post($thread->path() . '/subscriptions');
 
-        
-        // $this->assertCount(1, auth()->user()->notifications);
-        
+        $this->assertCount(1, $thread->subscriptions);
     }
-   
+
     public function test_user_can_unsubscribe_from_threads()
     {
         $this->signIn();
@@ -42,4 +35,5 @@ class SubscribeToThreadTest extends TestCase
 
         $this->assertCount(0, $thread->fresh()->subscriptions);
     }
+
 }
