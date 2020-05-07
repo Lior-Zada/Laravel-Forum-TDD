@@ -9,6 +9,7 @@ class Thread extends Model
 {
     protected $guarded = [];
     protected $with = ['creator', 'channel'];
+    protected $appends = ['isSubscribedTo'];
 
     use RecordsActivity;
 
@@ -25,7 +26,7 @@ class Thread extends Model
         // });
 
         // Register a model event that occurs on deleting, when you delete a thread, also delete it's associated replies
-        self::deleting(function($thread){
+        self::deleting(function ($thread) {
             // https://laravel-news.com/higher-order-messaging
             // This will invoke delete on each reply associated, which will invoke activities deletion on thread&reply
             $thread->replies->each->delete();
@@ -62,4 +63,31 @@ class Thread extends Model
     {
         return $filters->apply($query);
     }
+
+    public function subscribe($userId = null)
+    {
+        $this->subscriptions()->create([
+            'user_id' => $userId ?: auth()->id(),
+        ]);
+    }
+
+    public function unsubscribe($userId = null)
+    {
+        $this->subscriptions()
+            ->where('user_id', $userId ?: auth()->id())
+            ->delete();
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(ThreadSubscription::class);
+    }
+
+    public function getIsSubscribedToAttribute()
+    {
+        return $this->subscriptions()
+        ->where('user_id', auth()->id())
+        ->exists();
+    }
+
 }

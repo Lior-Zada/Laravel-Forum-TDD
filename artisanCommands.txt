@@ -22,6 +22,9 @@ php artisan make:model Thread -mr
 // run DatabaseSeeder.php
 php artisan db:seed
 
+//Clear application cache
+php artisan cache:clear  
+
 //Add this to \app\Exceptions\Handler.php @render() 
 if(app()->environment() === 'testing') throw $exception;
 
@@ -35,5 +38,8 @@ php artisan ui vue --auth
 // Create policies to authorize user actions.
 // you can specifiy the model to get some boilerplate on the policy
 php artisan make:policy ThreadPolicy --model=Thread
+
+
+
 
 
