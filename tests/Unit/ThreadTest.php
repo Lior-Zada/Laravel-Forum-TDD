@@ -2,8 +2,10 @@
 
 namespace Tests\Unit;
 
+use App\Notifications\ThreadWasUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\User;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ThreadTest extends TestCase
@@ -16,7 +18,8 @@ class ThreadTest extends TestCase
         $this->thread = create('App\Thread');
     }
 
-    public function test_a_thread_has_correct_path(){
+    public function test_a_thread_has_correct_path()
+    {
 
         $thread = create('App\Thread');
 
@@ -43,7 +46,24 @@ class ThreadTest extends TestCase
         $this->assertCount(1, $this->thread->replies);
     }
 
-    public function test_a_thread_belongs_to_a_channel(){
+    public function test_a_thread_notifies_all_registered_subscribers_when_a_reply_is_added()
+    {
+        // Fake Notification Facade made for testing.
+        Notification::fake();
+
+        $this->signIn()
+            ->thread
+            ->subscribe()
+            ->addReply([
+                'body' => 'Foobar',
+                'user_id' => create('App\User')->id
+            ]);
+
+        Notification::assertSentTo(auth()->user(), ThreadWasUpdated::class);
+    }
+
+    public function test_a_thread_belongs_to_a_channel()
+    {
 
         $thread = create('App\Thread');
         $this->assertInstanceOf('App\Channel', $thread->channel);
