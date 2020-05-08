@@ -7,7 +7,9 @@ use App\Thread;
 use App\User;
 use App\Channel;
 use Faker\Generator as Faker;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,3 +65,15 @@ $factory->define(Reply::class, function ($faker) {
         'body' => $faker->paragraph,
     ];
 });
+
+$factory->define(DatabaseNotification::class, function($faker){
+
+    return [
+        'id' => Uuid::uuid4()->toString(),
+        'type' => 'App\Notifications\ThreadWasUpdated',
+        'notifiable_id' => auth()->id() ?: create('App\User')->id,
+        'notifiable_type' => 'App\User',
+        'data' => ['foo'=>'bar']
+    ];
+});
+
