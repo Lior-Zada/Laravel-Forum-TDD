@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\ThreadHasNewReply;
 use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Model;
 use  App\Traits\RecordsActivity;
@@ -53,11 +54,8 @@ class Thread extends Model
     {
         // $this->increment('replies_count'); // It is an option, but we'll use model event.
         $reply = $this->replies()->create($reply);
-
-        //https://laravel.com/docs/7.x/collections#method-filter
-        $this->subscriptions->filter(function($sub) use($reply){
-            return $sub->user_id != $reply->user_id;
-        })->each->notify($reply);
+        
+        event(new ThreadHasNewReply($this, $reply));
   
         return $reply;
     }
@@ -102,6 +100,19 @@ class Thread extends Model
         return $this->subscriptions()
         ->where('user_id', auth()->id())
         ->exists();
+    }
+
+    public function notifiySubscribers(Reply $reply)
+    {
+         //https://laravel.com/docs/7.x/collections#method-filter
+        //  $this->subscriptions->filter(function ($sub) use ($reply) {
+        //     return $sub->user_id != $reply->user_id;
+        // })->each->notify($reply);
+
+        $this->subscriptions
+            ->where('user_id', '!=', $reply->user_id)
+            ->each
+            ->notify($reply);
     }
 
 }
