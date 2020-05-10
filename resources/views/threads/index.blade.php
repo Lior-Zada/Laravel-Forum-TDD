@@ -11,7 +11,14 @@
                     <div class="level">
                         <h4 class="flex">
                             <a href="{{$thread->path()}}">
-                                {{$thread->title}}</a>
+                                @if($thread->hasUpdadesFor(auth()->user()))
+                                <strong>
+                                    {{$thread->title}}
+                                </strong>
+                                @else
+                                {{$thread->title}}
+                                @endif
+                            </a>
                         </h4>
 
                         <a href="{{url($thread->path())}}">{{$thread->replies_count}} {{Str::plural('reply', $thread->replies_count)}}</a>
@@ -31,7 +38,7 @@
                 </div>
             </div>
             @empty
-                <p>There are no results at this time.</p>
+            <p>There are no results at this time.</p>
             @endforelse
 
         </div>

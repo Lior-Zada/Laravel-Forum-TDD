@@ -64,8 +64,23 @@ class ThreadTest extends TestCase
 
     public function test_a_thread_belongs_to_a_channel()
     {
-
         $thread = create('App\Thread');
         $this->assertInstanceOf('App\Channel', $thread->channel);
+    }
+
+    public function test_a_thread_can_check_an_authenticated_user_has_read_all_the_replies()
+    {
+        $this->signIn();
+        
+        $thread = create('App\Thread');
+        
+        $user =  auth()->user();
+        
+        $this->assertTrue($thread->hasUpdadesFor($user));
+
+        $user->read($thread);
+
+        $this->assertFalse($thread->hasUpdadesFor($user));
+
     }
 }
