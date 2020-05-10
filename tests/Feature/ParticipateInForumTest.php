@@ -48,7 +48,7 @@ class ParticipateInForumTest extends TestCase
         $reply = make('App\Reply', ['body' => null]);
 
         $this->post($thread->path() . '/replies', $reply->toArray())
-            ->assertSessionHasErrors(['body']);
+            ->assertStatus(422);
     }
 
     public function test_unauthorized_user_cannot_delete_reply()
@@ -126,8 +126,25 @@ class ParticipateInForumTest extends TestCase
             'body' => 'This is spam'
         ]);
 
-        $this->expectException(Exception::class);
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->assertStatus(422);
+    }
 
-        $this->post($thread->path() . '/replies', $reply->toArray());
+    public function test_users_cannot_reply_more_than_once_a_minute()
+    {
+        $this->signIn();
+
+        $thread = create('App\Thread');
+
+        $reply = make('App\Reply',[
+            'body' => 'Leaving reply.',
+            'thread_id' => $thread->id
+        ]);
+
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->assertStatus(200);
+
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->assertStatus(422);
     }
 }

@@ -39,7 +39,8 @@ php artisan ui vue --auth
 // you can specifiy the model to get some boilerplate on the policy
 php artisan make:policy ThreadPolicy --model=Thread
 
-
+//Create a new custom rule that you could use to validate input with
+php artisan make:rule SpamFree
 
 
 

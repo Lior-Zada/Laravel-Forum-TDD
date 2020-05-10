@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Inspections\Spam;
 use App\Reply;
 use App\Thread;
 use Exception;
@@ -27,7 +26,7 @@ class ReplyController extends Controller
     public function store($channelId, Thread $thread)
     {
         try {
-            $this->validateReply();
+            $this->validate(request(), ['body' => 'required|spamfree']);
 
             $reply = $thread->addReply([
                 'body' => request('body'),
@@ -64,9 +63,9 @@ class ReplyController extends Controller
     {
         $this->authorize('update', $reply);
 
-
         try {
-            $this->validateReply();
+            request()->validate(['body' => 'required|spamfree']);
+            
             $reply->update(['body' => request('body')]);
         } catch (Exception $e) {
             // 422 Unprocessable Entity
@@ -84,10 +83,7 @@ class ReplyController extends Controller
 
     public function validateReply()
     {
-        $this->validate(request(), [
-            'body' => 'required'
-        ]);
+        
 
-        resolve(Spam::class)->detect(request('body'));
     }
 }
