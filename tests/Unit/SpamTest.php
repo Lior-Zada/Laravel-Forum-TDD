@@ -3,13 +3,12 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Spam;
+use App\Inspections\Spam;
 use Exception;
 
 class SpamTest extends TestCase
 {
-
-    public function test_text_for_spam()
+    public function test_text_for_invalid_keywords()
     {
         $spam = new Spam();
         
@@ -17,6 +16,15 @@ class SpamTest extends TestCase
         
         $this->withoutExceptionHandling()->expectException(Exception::class);
 
-        $this->assertTrue($spam->detect("This is spam"));
+        $spam->detect("This is spam");
     }
-}
+
+    public function test_text_for_key_held_down()
+    {
+        $spam = new Spam();
+
+        $this->withoutExceptionHandling()->expectException(Exception::class);
+        
+        $spam->detect('Hi there hhhhh');
+    }
+} 

@@ -1967,14 +1967,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['message'],
+  props: ["message"],
   data: function data() {
     return {
       body: this.message,
+      level: "success",
       show: this.show
     };
   },
@@ -1985,14 +1983,15 @@ __webpack_require__.r(__webpack_exports__);
       this.flash(this.message);
     }
 
-    window.events.$on('flash', function (message) {
-      return _this.flash(message);
+    window.events.$on("flash", function (data) {
+      return _this.flash(data);
     });
   },
   methods: {
-    flash: function flash(message) {
+    flash: function flash(data) {
       this.show = true;
-      this.body = message;
+      this.body = data.message;
+      this.level = data.level;
       this.hide(3000);
     },
     hide: function hide(timeout) {
@@ -2042,7 +2041,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   computed: {
     signedIn: function signedIn() {
@@ -2065,6 +2063,8 @@ __webpack_require__.r(__webpack_exports__);
         flash("Your reply was posted successfully.");
 
         _this.$emit("created", response.data);
+      })["catch"](function (error) {
+        flash(error.response.data, "danger");
       });
     }
   }
@@ -2295,7 +2295,7 @@ __webpack_require__.r(__webpack_exports__);
       }); // return this.data.user_id == window.App.user.id;
     },
     ago: function ago() {
-      return moment__WEBPACK_IMPORTED_MODULE_1___default()(this.data.created_at).fromNow() + '...';
+      return moment__WEBPACK_IMPORTED_MODULE_1___default()(this.data.created_at).fromNow() + "...";
     }
   },
   data: function data() {
@@ -2307,18 +2307,23 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     update: function update() {
+      var _this2 = this;
+
       axios.patch("/replies/".concat(this.data.id), {
         body: this.body
+      }).then(function (response) {
+        _this2.editing = false;
+        flash("Reply updated!");
+      })["catch"](function (error) {
+        flash(error.response.data, "danger");
       });
-      this.editing = false;
-      flash("Reply updated!");
     },
     destroy: function destroy() {
       axios["delete"]("/replies/".concat(this.data.id)); // The child communicated to his parent with EVENTS.
       // The deleted event needs to be listened to on the parent.
-      // It will make the parent rerender 
+      // It will make the parent rerender
 
-      this.$emit('deleted', this.data.id); // $(this.$el).fadeOut(300, () => {
+      this.$emit("deleted", this.data.id); // $(this.$el).fadeOut(300, () => {
       //   flash("Reply Deleted!");
       // });
     }
@@ -7000,7 +7005,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.alert-flash{\n  position: fixed;\n  bottom: 25px;\n  right: 25px;\n}\n", ""]);
+exports.push([module.i, "\n.alert-flash {\r\n  position: fixed;\r\n  bottom: 25px;\r\n  right: 25px;\n}\r\n", ""]);
 
 // exports
 
@@ -59633,17 +59638,15 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      directives: [
-        { name: "show", rawName: "v-show", value: _vm.show, expression: "show" }
-      ],
-      staticClass: "alert alert-success alert-flash",
-      attrs: { role: "alert" }
-    },
-    [_c("strong", [_vm._v("Success! ")]), _vm._v(_vm._s(_vm.body) + "\n")]
-  )
+  return _c("div", {
+    directives: [
+      { name: "show", rawName: "v-show", value: _vm.show, expression: "show" }
+    ],
+    staticClass: "alert alert-flash",
+    class: "alert-" + _vm.level,
+    attrs: { role: "alert" },
+    domProps: { textContent: _vm._s(_vm.body) }
+  })
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -59908,7 +59911,7 @@ var render = function() {
                 attrs: { href: "/profile/" + _vm.data.owner.name },
                 domProps: { textContent: _vm._s(_vm.data.owner.name) }
               }),
-              _vm._v("\n        replied "),
+              _vm._v("\n        replied\n        "),
               _c("span", { domProps: { textContent: _vm._s(_vm.ago) } })
             ]),
             _vm._v(" "),
@@ -72310,7 +72313,11 @@ Vue.prototype.authorize = function (handler) {
 window.events = new Vue();
 
 window.flash = function (message) {
-  window.events.$emit('flash', message);
+  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
+  window.events.$emit('flash', {
+    message: message,
+    level: level
+  });
 };
 /**
  * The following block of code may be used to automatically register your

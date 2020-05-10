@@ -21,33 +21,38 @@
         <a href="/login">log</a> in to leave a reply...
       </p>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
-
-    computed: {
-        signedIn(){
-            return  window.App.signedIn;
-        }
-    },
+  computed: {
+    signedIn() {
+      return window.App.signedIn;
+    }
+  },
   data() {
     return {
-      body: "",
+      body: ""
     };
   },
 
   methods: {
     addReply() {
-      axios.post( `${location.pathname}/replies`, { body: this.body }).then(response => {
-        this.body = "";
+      axios
+        .post(`${location.pathname}/replies`, { body: this.body })
 
-        flash("Your reply was posted successfully.");
+        .then(response => {
+          this.body = "";
 
-        this.$emit("created", response.data);
-      });
+          flash("Your reply was posted successfully.");
+
+          this.$emit("created", response.data);
+        })
+
+        .catch(error => {
+          flash(error.response.data, "danger");
+        });
     }
   }
 };

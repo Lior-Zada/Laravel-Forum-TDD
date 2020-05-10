@@ -5,9 +5,10 @@
       <div class="level">
         <div class="flex">
           <a :href="`/profile/${data.owner.name}`" v-text="data.owner.name"></a>
-          replied <span v-text="ago"></span> 
+          replied
+          <span v-text="ago"></span>
         </div>
-        
+
         <favorite :reply="data" v-if="signedIn"></favorite>
 
         <!-- Added Vue component instead -->
@@ -29,7 +30,7 @@
       </div>
       <div v-else v-text="body"></div>
     </div>
-    
+
     <!-- @can('update', $reply) -->
     <div class="card-footer" v-if="canUpdate">
       <div class="level" v-if="editing">
@@ -41,16 +42,15 @@
         <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
         <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>
       </div>
-
     </div>
-    
+
     <!-- @endcan -->
   </div>
 </template>
 <script>
 // Because we use <favorite> within <reply> we import it here instead as global
 import Favorite from "./Favorite.vue";
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   props: ["data"],
@@ -58,15 +58,15 @@ export default {
   components: { Favorite },
 
   computed: {
-    signedIn(){
+    signedIn() {
       return window.App.signedIn;
     },
-    canUpdate(){
+    canUpdate() {
       return this.authorize(user => this.data.user_id == window.App.user.id);
       // return this.data.user_id == window.App.user.id;
     },
-    ago(){
-      return moment(this.data.created_at).fromNow() + '...';
+    ago() {
+      return moment(this.data.created_at).fromNow() + "...";
     }
   },
 
@@ -74,18 +74,23 @@ export default {
     return {
       editing: false,
       body: this.data.body,
-      id: this.data.id,
+      id: this.data.id
     };
   },
 
   methods: {
     update() {
-      axios.patch(`/replies/${this.data.id}`, {
-        body: this.body
-      });
-
-      this.editing = false;
-      flash("Reply updated!");
+      axios
+        .patch(`/replies/${this.data.id}`, {
+          body: this.body
+        })
+        .then(response => {
+          this.editing = false;
+          flash("Reply updated!");
+        })
+        .catch(error => {
+          flash(error.response.data, "danger");
+        });
     },
 
     destroy() {
@@ -93,8 +98,8 @@ export default {
 
       // The child communicated to his parent with EVENTS.
       // The deleted event needs to be listened to on the parent.
-      // It will make the parent rerender 
-      this.$emit('deleted', this.data.id);
+      // It will make the parent rerender
+      this.$emit("deleted", this.data.id);
 
       // $(this.$el).fadeOut(300, () => {
       //   flash("Reply Deleted!");
