@@ -18,8 +18,15 @@ class ReplyTest extends TestCase
         $this->reply = create('App\Reply');
     }
 
-    function test_it_has_an_owner()
+    public function test_it_has_an_owner()
     {
         $this->assertInstanceOf('App\User', $this->reply->owner);
     }
+
+    public function test_it_knows_a_reply_was_just_published()
+    {
+        $this->assertTrue($this->reply->wasJustPublished());
+    }
+
+
 }

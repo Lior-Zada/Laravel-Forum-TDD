@@ -6,6 +6,7 @@ use App\Reply;
 use App\Thread;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ReplyController extends Controller
 {
@@ -25,6 +26,11 @@ class ReplyController extends Controller
 
     public function store($channelId, Thread $thread)
     {
+        // $this->authorize('create', new Reply);
+        if (Gate::denies('create', new Reply)) {
+            return response('You are posting too many replies, please take a break.', 422);
+        }
+        
         try {
             $this->validate(request(), ['body' => 'required|spamfree']);
 
@@ -65,7 +71,7 @@ class ReplyController extends Controller
 
         try {
             request()->validate(['body' => 'required|spamfree']);
-            
+
             $reply->update(['body' => request('body')]);
         } catch (Exception $e) {
             // 422 Unprocessable Entity
@@ -83,7 +89,5 @@ class ReplyController extends Controller
 
     public function validateReply()
     {
-        
-
     }
 }

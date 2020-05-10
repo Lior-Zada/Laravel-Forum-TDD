@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::middleware('throttle:1')->post(...); can use this the allow a user's IP to engage this endpoint maximum 1 per minute
+
 Route::get('/', function () {
     return view('welcome');
 });

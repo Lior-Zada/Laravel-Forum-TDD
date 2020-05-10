@@ -62,4 +62,10 @@ class User extends Authenticatable
     {
         return sprintf("users.%s.visits.%s", $this->id, $thread->id);
     }
+
+    public function lastReply()
+    {
+        // Yes a user "hasMany", but since we only want one, we can use this.
+        return $this->hasOne(Reply::class)->latest();
+    }
 }

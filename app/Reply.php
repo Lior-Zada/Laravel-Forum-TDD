@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -38,6 +39,7 @@ class Reply extends Model
     {
         return url($this->thread->path() . "#reply-{$this->id}");
     }
+
     public function owner()
     {
         // since the function name is owner, must explict the forien key to be different -> user_id
@@ -47,5 +49,10 @@ class Reply extends Model
     public function thread()
     {
         return $this->belongsTo(Thread::class);
+    }
+    
+    public function wasJustPublished()
+    {
+        return $this->created_at->gt(Carbon::now()->subMinute());
     }
 }
