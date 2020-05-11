@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePostRequest;
 use App\Reply;
 use App\Thread;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class ReplyController extends Controller
 {
@@ -16,38 +15,20 @@ class ReplyController extends Controller
         $this->middleware('auth')->except('index');
     }
 
-
     public function index($channelId, Thread $thread)
     {
-
         return $thread->replies()->paginate(20);
     }
 
-
-    public function store($channelId, Thread $thread)
+    // Dependency injection of CreatePostForm will decide if to approve this request.
+    // Laravel knows to use it automaticaly when its injected.
+    public function store($channelId, Thread $thread, CreatePostRequest $form)
     {
-        // $this->authorize('create', new Reply);
-        if (Gate::denies('create', new Reply)) {
-            return response('You are posting too many replies, please take a break.', 422);
-        }
-        
-        try {
-            $this->validate(request(), ['body' => 'required|spamfree']);
-
-            $reply = $thread->addReply([
-                'body' => request('body'),
-                'user_id' => auth()->id(),
-            ]);
-        } catch (Exception $e) {
-            // 422 Unprocessable Entity
-            return response('Sorry, your reply could not be saved right now.', 422);
-        }
-
-        if (request()->expectsJson()) {
-            // must eagerLoad owner manually in this case
-            return $reply->load('owner');
-        }
-
+        return $thread->addReply([
+            'body' => request('body'),
+            'user_id' => auth()->id(),
+        ])->load('owner'); // must eagerLoad owner manually since we're returning json and not a redirect
+       
         // If we're using a regular form.
         // return back()->with('flash', 'Your reply was saved.');
     }
