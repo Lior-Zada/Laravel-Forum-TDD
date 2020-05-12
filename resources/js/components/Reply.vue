@@ -24,26 +24,24 @@
     </div>
     <div class="card-body">
       <div v-if="editing">
-        <div class="form-group">
-          <textarea name="body" id="body" class="form-control" v-model="body"></textarea>
-        </div>
+        <form @submit.prevent="update">
+          <div class="form-group">
+            <textarea name="body" id="body" class="form-control" v-model="body" required></textarea>
+          </div>
+          <div class="level">
+            <button class="btn btn-primary btn-sm" type="submit">Update</button>
+            <button class="btn btn-link" @click="editing = false" type="button">Cancel</button>
+          </div>
+        </form>
       </div>
       <div v-else v-text="body"></div>
     </div>
 
     <!-- @can('update', $reply) -->
-    <div class="card-footer" v-if="canUpdate">
-      <div class="level" v-if="editing">
-        <button class="btn btn-primary" @click="update">Update</button>
-        <button class="btn btn-link" @click="editing = false">Cancel</button>
-      </div>
-
-      <div class="level" v-else>
-        <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
-        <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>
-      </div>
+    <div class="card-footer level" v-if="canUpdate">
+      <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
+      <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>
     </div>
-
     <!-- @endcan -->
   </div>
 </template>

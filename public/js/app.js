@@ -2273,8 +2273,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 // Because we use <favorite> within <reply> we import it here instead as global
 
 
@@ -59926,82 +59924,94 @@ var render = function() {
       _c("div", { staticClass: "card-body" }, [
         _vm.editing
           ? _c("div", [
-              _c("div", { staticClass: "form-group" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.body,
-                      expression: "body"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { name: "body", id: "body" },
-                  domProps: { value: _vm.body },
+              _c(
+                "form",
+                {
                   on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.body = $event.target.value
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.update($event)
                     }
                   }
-                })
-              ])
+                },
+                [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("textarea", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.body,
+                          expression: "body"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { name: "body", id: "body", required: "" },
+                      domProps: { value: _vm.body },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.body = $event.target.value
+                        }
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "level" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-sm",
+                        attrs: { type: "submit" }
+                      },
+                      [_vm._v("Update")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-link",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.editing = false
+                          }
+                        }
+                      },
+                      [_vm._v("Cancel")]
+                    )
+                  ])
+                ]
+              )
             ])
           : _c("div", { domProps: { textContent: _vm._s(_vm.body) } })
       ]),
       _vm._v(" "),
       _vm.canUpdate
-        ? _c("div", { staticClass: "card-footer" }, [
-            _vm.editing
-              ? _c("div", { staticClass: "level" }, [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary",
-                      on: { click: _vm.update }
-                    },
-                    [_vm._v("Update")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-link",
-                      on: {
-                        click: function($event) {
-                          _vm.editing = false
-                        }
-                      }
-                    },
-                    [_vm._v("Cancel")]
-                  )
-                ])
-              : _c("div", { staticClass: "level" }, [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary btn-sm mr-3",
-                      on: {
-                        click: function($event) {
-                          _vm.editing = true
-                        }
-                      }
-                    },
-                    [_vm._v("Edit reply")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-danger btn-sm",
-                      on: { click: _vm.destroy }
-                    },
-                    [_vm._v("Delete reply")]
-                  )
-                ])
+        ? _c("div", { staticClass: "card-footer level" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary btn-sm mr-3",
+                on: {
+                  click: function($event) {
+                    _vm.editing = true
+                  }
+                }
+              },
+              [_vm._v("Edit reply")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-danger btn-sm",
+                on: { click: _vm.destroy }
+              },
+              [_vm._v("Delete reply")]
+            )
           ])
         : _vm._e()
     ]

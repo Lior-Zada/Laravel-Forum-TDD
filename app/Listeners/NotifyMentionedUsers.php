@@ -8,7 +8,7 @@ use App\Notifications\YouWereMentioned;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class NotifiyMentionedUsers
+class NotifyMentionedUsers
 {
     /**
      * Handle the event.
@@ -18,11 +18,8 @@ class NotifiyMentionedUsers
      */
     public function handle(ThreadHasNewReply $event)
     {
-        collect($event->reply->mentionedUsers())
-            ->map(function($name){// will either return the user collection or null.
-                return User::whereName($name)->first();    
-            })
-            ->filter() // empty filter will filter out the null values
+        User::whereIn('name', $event->reply->mentionedUsers())
+            ->get()
             ->each
             ->notify(new YouWereMentioned($event->reply));
     }
