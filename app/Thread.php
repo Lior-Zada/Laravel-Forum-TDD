@@ -104,15 +104,7 @@ class Thread extends Model
 
     public function notifiySubscribers(Reply $reply)
     {
-         //https://laravel.com/docs/7.x/collections#method-filter
-        //  $this->subscriptions->filter(function ($sub) use ($reply) {
-        //     return $sub->user_id != $reply->user_id;
-        // })->each->notify($reply);
-
-        $this->subscriptions
-            ->where('user_id', '!=', $reply->user_id)
-            ->each
-            ->notify($reply);
+      
     }
 
     public function hasUpdadesFor($user)

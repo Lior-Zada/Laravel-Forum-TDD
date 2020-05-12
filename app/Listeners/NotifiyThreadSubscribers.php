@@ -16,6 +16,14 @@ class NotifiyThreadSubscribers
      */
     public function handle(ThreadHasNewReply $event)
     {
-        $event->thread->notifiySubscribers($event->reply);
+        //https://laravel.com/docs/7.x/collections#method-filter
+        //  $this->subscriptions->filter(function ($sub) use ($reply) {
+        //     return $sub->user_id != $reply->user_id;
+        // })->each->notify($reply);
+
+        $event->thread->subscriptions
+            ->where('user_id', '!=', $event->reply->user_id)
+            ->each
+            ->notify($event->reply);
     }
 }

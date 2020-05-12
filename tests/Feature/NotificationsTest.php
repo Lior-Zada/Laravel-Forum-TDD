@@ -38,6 +38,7 @@ class NotificationsTest extends TestCase
         ]);
 
         $this->assertCount(1, auth()->user()->fresh()->notifications);
+        
     }
 
     public function test_a_user_can_fetch_his_unread_notifications()
