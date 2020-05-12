@@ -62,7 +62,4 @@ class ReplyController extends Controller
         // return back();
     }
 
-    public function validateReply()
-    {
-    }
 }
