@@ -102,11 +102,6 @@ class Thread extends Model
         ->exists();
     }
 
-    public function notifiySubscribers(Reply $reply)
-    {
-      
-    }
-
     public function hasUpdadesFor($user)
     {
         $key = $user->visitedThreadCacheKey($this);
