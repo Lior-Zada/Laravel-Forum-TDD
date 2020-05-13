@@ -1,5 +1,6 @@
 To run when phpunit isn't working globally, run the laravel phpunit:
 ./vendor/bin/phpunit
+./vendor/bin/phpunit --filter the_name_of_test_or_class_of_tests
 
 1.php artisan tinker
 2.$threads = factory('App\Thread', 50)->create()
@@ -44,3 +45,6 @@ php artisan make:rule SpamFree
 
 
 
+------------- NPM ---------------
+//Search for specific lib before downloading it
+npm search tributejs
