@@ -43,6 +43,8 @@ php artisan make:policy ThreadPolicy --model=Thread
 //Create a new custom rule that you could use to validate input with
 php artisan make:rule SpamFree
 
+//Create a symbolic link between the storage/app/public and the public directory
+php artisan storage:link
 
 
 ------------- NPM ---------------

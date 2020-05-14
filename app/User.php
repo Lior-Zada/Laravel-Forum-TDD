@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'avatar_path',
     ];
 
     /**
@@ -67,5 +67,10 @@ class User extends Authenticatable
     {
         // Yes a user "hasMany", but since we only want one, we can use this.
         return $this->hasOne(Reply::class)->latest();
+    }
+
+    public function avatar()
+    {
+        return !$this->avatar_path ? asset('storage/avatars/default.jpg') : asset('storage/' . $this->avatar_path );
     }
 }

@@ -49,7 +49,11 @@ Route::delete('/profiles/{user:name}/notifications/{notification}', 'UserNotific
 
 
 Route::group(['prefix' => 'api', 'namespace' => 'Api'], function(){
-    Route::get('users', 'UsersController@index');
+    
+    Route::group(['prefix' => 'users'], function(){
+        Route::get('/', 'UsersController@index'); // for mention autocomplete
+        Route::post('/{user}/avatar', 'UsersAvatarController@store')->middleware('auth')->name('avatar');
+    });
 });
 
 
