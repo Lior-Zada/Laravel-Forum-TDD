@@ -1,45 +1,64 @@
 <template>
   <div class="card-header">
-    <h1 v-text="user.name">
-      <small v-text="ago"></small>
-    </h1>
+    <div class="level mb-3">
+      <img :src="avatar" width="50" height="50" class="mr-3"/>
+
+      <h1 v-text="user.name">
+        <small v-text="ago"></small>
+      </h1>
+    </div>
 
     <form v-if="canUpdate" method="POST" enctype="multipart/form-data">
-      <input type="file" name="avatar" id="avatar" accept="image/*" @change="onChange"/>
+      <!-- You can pass along native attributes to be assigned on the element within, which enables more flexability -->
+      <image-upload name="avatar" @loaded="onLoad"></image-upload>
       <button type="submit">Add avatar</button>
     </form>
-
-    <img :src="avatar" width="200" height="200" />
   </div>
 </template>
 
 <script>
 import moment from "moment";
+import imageUpload from "./ImageUpload";
 export default {
   props: ["user"],
+
+  components: { imageUpload },
+
+  data() {
+    return {
+      avatar: this.user.avatar_path
+    };
+  },
 
   computed: {
     canUpdate() {
       return this.authorize(user => user.id === this.user.id);
-    } ,  ago() {
-      return ("Joined" + moment(this.user.created_at).fromNow() + "...");
     },
+    ago() {
+      return "Joined" + moment(this.user.created_at).fromNow() + "...";
+    }
   },
 
   methods: {
- 
-
     getRoute() {
       return "";
     },
-    avatar() {
-      return "";
+
+    onLoad(avatar) {
+      this.updateCurrentImage(avatar.src);
+      this.persist(avatar.file);
     },
-    onChange(e){
-        
-        if(! e.target.files.length) return;
-        let file = e.target.files[0];
-        
+
+    updateCurrentImage(image) {
+      this.avatar = image;
+    },
+
+    persist(file) {
+      let formData = new FormData();
+      formData.append("avatar", file);
+      axios
+        .post(`/api/users/${this.user.name}/avatar`, formData)
+        .then(response => flash("Avatar uploaded!"));
     }
   }
 };
