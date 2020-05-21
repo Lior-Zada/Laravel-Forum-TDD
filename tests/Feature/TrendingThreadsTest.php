@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
 
-use function GuzzleHttp\json_decode;
 
 class TrendingThreadsTest extends TestCase
 {
@@ -36,5 +35,23 @@ class TrendingThreadsTest extends TestCase
         $this->assertCount(1, $trending);
         
         $this->assertEquals($thread->title, $trending[0]->title);
+    }
+
+
+    public function test_a_thread_record_each_visit()
+    {
+        $thread = create('App\Thread', ['id' => 1]);
+
+        $thread->resetVisits();
+
+        $this->assertSame(0, $thread->visits());
+        
+        $thread->recordVisit();
+        
+        $this->assertEquals(1, $thread->visits());
+        
+        $thread->recordVisit();
+        
+        $this->assertEquals(2, $thread->visits());
     }
 }

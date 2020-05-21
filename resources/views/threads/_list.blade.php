@@ -31,6 +31,10 @@
         <hr>
 
     </div>
+
+    <div class="card-footer">
+        {{$thread->visits()}} {{Str::plural('Visit', $thread->visits())}}
+    </div>
 </div>
 @empty
 <p>There are no results at this time.</p>

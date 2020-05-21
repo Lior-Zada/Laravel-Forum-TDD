@@ -3,9 +3,9 @@
 namespace App;
 
 use App\Events\ThreadHasNewReply;
-use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Model;
-use  App\Traits\RecordsActivity;
+use App\Traits\RecordsActivity;
+use App\Traits\RecordsVisits;
 
 class Thread extends Model
 {
@@ -13,7 +13,7 @@ class Thread extends Model
     protected $with = ['creator', 'channel'];
     protected $appends = ['isSubscribedTo'];
 
-    use RecordsActivity;
+    use RecordsActivity, RecordsVisits;
 
     // laravel knows to trigger automatically
     protected static function boot()
