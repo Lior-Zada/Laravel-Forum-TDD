@@ -47,6 +47,16 @@ php artisan make:rule SpamFree
 php artisan storage:link
 
 
+------------- REDIS ---------------
+//pull redis
+composer require predis/predis
+
+//download and you can run redis-cli and server from there
+https://github.com/microsoftarchive/redis/releases
+
+//help 
+https://laracasts.com/discuss/channels/laravel/verify-redis-to-run-properly-on-laravel-5?page=1
+
 ------------- NPM ---------------
 //Search for specific lib before downloading it
 npm search tributejs

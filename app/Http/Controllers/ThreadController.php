@@ -6,6 +6,7 @@ use App\Channel;
 use App\Thread;
 use App\Filters\ThreadFilter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class ThreadController extends Controller
 {
@@ -27,7 +28,9 @@ class ThreadController extends Controller
             return $threads;
         }
 
-        return view('Threads.index', compact('threads'));
+        $trending = array_map('json_decode', Redis::zrevrange('trending_threads', 0, 4));
+        
+        return view('Threads.index', compact('threads', 'trending'));
     }
 
     /**
@@ -73,9 +76,14 @@ class ThreadController extends Controller
      */
     public function show($channelId, Thread $thread)
     {
-       if(auth()->check()){
-           auth()->user()->read($thread);
-       }
+        if(auth()->check()){
+            auth()->user()->read($thread);
+        }
+
+        Redis::zincrby('trending_threads', 1, json_encode([
+            'title' => $thread->title,
+            'path' => $thread->path(),
+        ]));
 
         return view('threads.show', compact('thread'));
     }
