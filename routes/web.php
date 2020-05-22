@@ -22,7 +22,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/threads', 'ThreadController@index');
-Route::post('/threads', 'ThreadController@store');
+Route::post('/threads', 'ThreadController@store')->middleware('must-be-confirmed');
 Route::get('/threads/create', 'ThreadController@create');
 // override the model route binding from id to 'slug', instead of overloading "getRouteKeyName" method.
 Route::get('/threads/{channel:slug}', 'ThreadController@index'); 

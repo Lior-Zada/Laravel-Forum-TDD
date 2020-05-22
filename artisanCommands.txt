@@ -46,6 +46,10 @@ php artisan make:rule SpamFree
 //Create a symbolic link between the storage/app/public and the public directory
 php artisan storage:link
 
+//make middleware
+// youu need to register it at Kernel.php @ routeMiddleware
+php artisan make:middleware RedirectIfEmailNotConfirmed
+
 
 ------------- REDIS ---------------
 //pull redis

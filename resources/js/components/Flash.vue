@@ -16,7 +16,7 @@ export default {
 
   created() {
     if (this.message) {
-      this.flash(this.message);
+      this.flash();
     }
 
     window.events.$on("flash", data => this.flash(data));
@@ -24,10 +24,11 @@ export default {
 
   methods: {
     flash(data) {
+      if (data){
+        this.body = data.message;
+        this.level = data.level;
+      }
       this.show = true;
-      this.body = data.message;
-      this.level = data.level;
-
       this.hide(3000);
     },
 

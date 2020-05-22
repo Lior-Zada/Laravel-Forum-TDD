@@ -21,6 +21,19 @@ class CreateThreadsTest extends TestCase
             ->assertRedirect('/login');
     }
 
+    public function test_a_user_must_confirm_email_before_posting_a_thread()
+    {
+        $user = create('App\User', ['email_verified_at' => null]);
+        
+        $this->signIn($user);
+        
+        $thread = make('App\Thread');
+        
+        $this->post(url('threads'), $thread->toArray())
+            ->assertRedirect('/threads')
+            ->assertSessionHas('flash');
+    }
+
     public function test_user_can_create_thread()
     {
         $this->signIn();
