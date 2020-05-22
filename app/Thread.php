@@ -5,7 +5,6 @@ namespace App;
 use App\Events\ThreadHasNewReply;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\RecordsActivity;
-use App\Traits\RecordsVisits;
 
 class Thread extends Model
 {
@@ -13,7 +12,7 @@ class Thread extends Model
     protected $with = ['creator', 'channel'];
     protected $appends = ['isSubscribedTo'];
 
-    use RecordsActivity, RecordsVisits;
+    use RecordsActivity;
 
     // laravel knows to trigger automatically
     protected static function boot()
@@ -107,6 +106,11 @@ class Thread extends Model
         $key = $user->visitedThreadCacheKey($this);
 
         return $this->updated_at > cache($key);
+    }
+
+    public function visits()
+    {
+        return new Visits($this);
     }
 
 }
