@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Activity;
+use App\Thread;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -86,6 +87,21 @@ class CreateThreadsTest extends TestCase
     {
         $this->publishThread(['body' => null])
             ->assertSessionHasErrors('body');
+    }
+
+    public function test_a_thread_requires_a_unique_slug()
+    {
+        $this->signIn();
+
+        $this->withoutExceptionHandling();
+
+        $thread = create('App\Thread', ['title' => 'Test title', 'slug' => 'test-title']);
+        
+        $this->assertEquals($thread->fresh()->slug, 'test-title');
+
+        $this->post('threads', $thread->toArray());
+        
+        $this->assertTrue(Thread::whereSlug('test-title-2')->exists());
     }
 
     public function test_a_thread_requires_a_valid_channel_id()

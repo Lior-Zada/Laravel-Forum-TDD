@@ -5,6 +5,7 @@ namespace App;
 use App\Events\ThreadHasNewReply;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\RecordsActivity;
+use Illuminate\Support\Str;
 
 class Thread extends Model
 {
@@ -116,6 +117,27 @@ class Thread extends Model
     public function visits()
     {
         return new Visits($this);
+    }
+
+    public function setSlugAttribute($value)
+    {
+        if(self::whereSlug($slug = Str::slug($value))->exists()){
+            $slug = $this->incrementSlug($slug);
+        }
+        $this->attributes['slug'] = $slug;
+    }
+
+    public function incrementSlug($slug)
+    {
+        $max = self::whereTitle($this->title)->latest('id')->value('slug');
+
+        if(is_numeric($max[-1])){
+            return preg_replace_callback('/(\d+)$/', function($matches){
+                return $matches[0]+1;
+            }, $max);
+        }
+
+        return "{$slug}-2";
     }
 
 }
