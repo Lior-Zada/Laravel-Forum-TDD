@@ -48,7 +48,10 @@ php artisan storage:link
 
 //make middleware
 // youu need to register it at Kernel.php @ routeMiddleware
-php artisan make:middleware RedirectIfEmailNotConfirmed
+php artisan make:middleware SomeMiddlewareName
+
+//make mail  - didnt use it eventually, used new laravel default layout
+php artisan make:mail PleaseConfirmYourEmail --markdown="emails.confirm-email"
 
 
 ------------- REDIS ---------------
