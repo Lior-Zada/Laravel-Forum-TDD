@@ -23,7 +23,7 @@ class ThreadTest extends TestCase
 
         $thread = create('App\Thread');
 
-        $this->assertEquals(url("threads/{$thread->channel->slug}/$thread->id"), $thread->path());
+        $this->assertEquals(url("threads/{$thread->channel->slug}/$thread->slug"), $thread->path());
     }
 
     public function test_a_thread_has_a_creator()

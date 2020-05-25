@@ -30,7 +30,7 @@ class CreateThreadsTest extends TestCase
         $thread = make('App\Thread');
         
         $this->post(url('threads'), $thread->toArray())
-            ->assertRedirect('/threads')
+            ->assertRedirect('/email/verify')
             ->assertSessionHas('flash');
     }
 

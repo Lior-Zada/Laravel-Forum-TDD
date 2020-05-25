@@ -53,6 +53,8 @@ php artisan make:middleware SomeMiddlewareName
 //make mail  - didnt use it eventually, used new laravel default layout
 php artisan make:mail PleaseConfirmYourEmail --markdown="emails.confirm-email"
 
+// see default laravel and our registered routes 
+php artisan route:list
 
 ------------- REDIS ---------------
 //pull redis
