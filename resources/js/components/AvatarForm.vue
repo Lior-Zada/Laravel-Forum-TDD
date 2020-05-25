@@ -11,7 +11,6 @@
     <form v-if="canUpdate" method="POST" enctype="multipart/form-data">
       <!-- You can pass along native attributes to be assigned on the element within, which enables more flexability -->
       <image-upload name="avatar" @loaded="onLoad"></image-upload>
-      <button type="submit">Add avatar</button>
     </form>
   </div>
 </template>

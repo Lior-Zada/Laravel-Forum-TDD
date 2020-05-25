@@ -1928,7 +1928,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -59785,9 +59784,7 @@ var render = function() {
             _c("image-upload", {
               attrs: { name: "avatar" },
               on: { loaded: _vm.onLoad }
-            }),
-            _vm._v(" "),
-            _c("button", { attrs: { type: "submit" } }, [_vm._v("Add avatar")])
+            })
           ],
           1
         )
