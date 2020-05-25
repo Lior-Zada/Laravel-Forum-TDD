@@ -93,15 +93,24 @@ class CreateThreadsTest extends TestCase
     {
         $this->signIn();
 
-        $this->withoutExceptionHandling();
-
-        $thread = create('App\Thread', ['title' => 'Test title', 'slug' => 'test-title']);
+        $thread = create('App\Thread', ['title' => 'Test title']);
         
         $this->assertEquals($thread->fresh()->slug, 'test-title');
 
-        $this->post('threads', $thread->toArray());
+        $thread = $this->postJson('threads', $thread->toArray())->json();
         
-        $this->assertTrue(Thread::whereSlug('test-title-2')->exists());
+        $this->assertEquals("test-title-{$thread['id']}", $thread['slug']);
+    }
+
+    public function test_a_thread_that_ends_with_a_number_should_generate_proper_slug()
+    {
+        $this->signIn();
+
+        $thread = create('App\Thread', ['title' => 'Test title 42']);
+
+        $thread = $this->postJson('threads', $thread->toArray())->json();
+
+        $this->assertEquals("test-title-42-{$thread['id']}", $thread['slug']);
     }
 
     public function test_a_thread_requires_a_valid_channel_id()

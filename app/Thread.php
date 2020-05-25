@@ -33,6 +33,10 @@ class Thread extends Model
             // This will invoke delete on each reply associated, which will invoke activities deletion on thread&reply
             $thread->replies->each->delete();
         });
+       
+        self::created(function ($thread) {
+            $thread->update(['slug' => $thread->title]);
+        });
     }
 
     public function getRouteKeyName()
@@ -122,22 +126,8 @@ class Thread extends Model
     public function setSlugAttribute($value)
     {
         if(self::whereSlug($slug = Str::slug($value))->exists()){
-            $slug = $this->incrementSlug($slug);
+            $slug = "{$slug}-{$this->id}";
         }
         $this->attributes['slug'] = $slug;
     }
-
-    public function incrementSlug($slug)
-    {
-        $max = self::whereTitle($this->title)->latest('id')->value('slug');
-
-        if(is_numeric($max[-1])){
-            return preg_replace_callback('/(\d+)$/', function($matches){
-                return $matches[0]+1;
-            }, $max);
-        }
-
-        return "{$slug}-2";
-    }
-
 }
