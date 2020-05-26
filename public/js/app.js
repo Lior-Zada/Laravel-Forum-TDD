@@ -2416,6 +2416,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 // Because we use <favorite> within <reply> we import it here instead as global
 
 
@@ -2443,7 +2448,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       editing: false,
       body: this.data.body,
-      id: this.data.id
+      id: this.data.id,
+      isBest: false
     };
   },
   methods: {
@@ -2456,7 +2462,7 @@ __webpack_require__.r(__webpack_exports__);
         _this2.editing = false;
         flash("Reply updated!");
       })["catch"](function (error) {
-        flash(error.response.data, "danger");
+        return flash(error.response.data, "danger");
       });
     },
     destroy: function destroy() {
@@ -2467,6 +2473,16 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit("deleted", this.data.id); // $(this.$el).fadeOut(300, () => {
       //   flash("Reply Deleted!");
       // });
+    },
+    markBestReply: function markBestReply() {
+      var _this3 = this;
+
+      axios.post("/replies/".concat(this.data.id, "/best")).then(function (response) {
+        flash("Reply marked as best reply!");
+        _this3.isBest = true;
+      })["catch"](function (error) {
+        return flash(error.response.data, "danger");
+      });
     }
   }
 });
@@ -60129,7 +60145,11 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "card mb-3", attrs: { id: "reply-" + _vm.id } },
+    {
+      staticClass: "card mb-3",
+      class: _vm.isBest ? "text-white bg-dark" : "",
+      attrs: { id: "reply-" + _vm.id }
+    },
     [
       _c("div", { staticClass: "card-header" }, [
         _c(
@@ -60221,31 +60241,54 @@ var render = function() {
           : _c("div", { domProps: { innerHTML: _vm._s(_vm.body) } })
       ]),
       _vm._v(" "),
-      _vm.canUpdate
-        ? _c("div", { staticClass: "card-footer level" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary btn-sm mr-3",
-                on: {
-                  click: function($event) {
-                    _vm.editing = true
+      _c("div", { staticClass: "card-footer level" }, [
+        _vm.canUpdate
+          ? _c("div", [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary btn-sm mr-3",
+                  on: {
+                    click: function($event) {
+                      _vm.editing = true
+                    }
                   }
-                }
-              },
-              [_vm._v("Edit reply")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-danger btn-sm",
-                on: { click: _vm.destroy }
-              },
-              [_vm._v("Delete reply")]
-            )
-          ])
-        : _vm._e()
+                },
+                [_vm._v("Edit reply")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger btn-sm",
+                  on: { click: _vm.destroy }
+                },
+                [_vm._v("Delete reply")]
+              )
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.threadOwner
+          ? _c("div", [
+              _c(
+                "button",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: !_vm.isBest,
+                      expression: "! isBest"
+                    }
+                  ],
+                  staticClass: "btn btn-secondary btn-sm ml-auto",
+                  on: { click: _vm.markBestReply }
+                },
+                [_vm._v("Best reply")]
+              )
+            ])
+          : _vm._e()
+      ])
     ]
   )
 }

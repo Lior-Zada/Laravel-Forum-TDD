@@ -41,6 +41,8 @@ Route::delete('/threads/{channel}/{thread}/subscriptions', 'ThreadSubscriptionsC
 Route::post('/replies/{reply}/favorites' , 'FavoritesController@store');
 Route::delete('/replies/{reply}/favorites' , 'FavoritesController@destroy');
 
+Route::post('/replies/{reply}/best' , 'BestRepliesController@store')->name('best-replies.store');
+
 // ->name('profile') allows us to use route('profile' , $item) at the blade.
 //  (you dont have to specify $item->name, laravel knows what to take.)
 Route::get('/profiles/{user:name}', 'ProfilesController@show')->name('profile');
