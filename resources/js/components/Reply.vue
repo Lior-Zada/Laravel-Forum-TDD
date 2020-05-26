@@ -4,12 +4,12 @@
     <div class="card-header">
       <div class="level">
         <div class="flex">
-          <a :href="`/profile/${data.owner.name}`" v-text="data.owner.name"></a>
+          <a :href="`/profile/${reply.owner.name}`" v-text="reply.owner.name"></a>
           replied
           <span v-text="ago"></span>
         </div>
 
-        <favorite :reply="data" v-if="signedIn"></favorite>
+        <favorite :reply="reply" v-if="signedIn"></favorite>
 
         <!-- Added Vue component instead -->
         <!-- @auth -->
@@ -38,11 +38,12 @@
     </div>
 
     <!-- @can('update', $reply) -->
-    <div class="card-footer level">
+    <div class="card-footer level" v-if="authorize('updateReply', reply) || authorize('markBestReply', reply)">
       <div v-if="authorize('updateReply', reply)">
         <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
         <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>  
       </div>
+      
       <div class="ml-auto" v-if="authorize('markBestReply', reply)">
         <button class="btn btn-secondary btn-sm" @click="markBestReply" v-show="! isBest">Best reply</button>
       </div>
@@ -56,23 +57,22 @@ import Favorite from "./Favorite.vue";
 import moment from "moment";
 
 export default {
-  props: ["data"],
+  props: ["reply"],
 
   components: { Favorite },
 
   computed: {
     ago() {
-      return moment(this.data.created_at).fromNow() + "...";
+      return moment(this.reply.created_at).fromNow() + "...";
     }
   },
 
   data() {
     return {
       editing: false,
-      body: this.data.body,
-      id: this.data.id,
-      isBest: this.data.isBest,
-      reply: this.data,
+      body: this.reply.body,
+      id: this.reply.id,
+      isBest: this.reply.isBest,
     };
   },
 
@@ -84,7 +84,7 @@ export default {
   methods: {
     update() {
       axios
-        .patch(`/replies/${this.data.id}`, {
+        .patch(`/replies/${this.id}`, {
           body: this.body
         })
         .then(response => {
@@ -95,12 +95,12 @@ export default {
     },
 
     destroy() {
-      axios.delete(`/replies/${this.data.id}`);
+      axios.delete(`/replies/${this.id}`);
 
       // The child communicated to his parent with EVENTS.
       // The deleted event needs to be listened to on the parent.
       // It will make the parent rerender
-      this.$emit("deleted", this.data.id);
+      this.$emit("deleted", this.id);
 
       // $(this.$el).fadeOut(300, () => {
       //   flash("Reply Deleted!");
@@ -109,10 +109,10 @@ export default {
 
     markBestReply() {
       axios
-        .post(`/replies/${this.data.id}/best`)
+        .post(`/replies/${this.id}/best`)
         .then(response => {
           flash("Reply marked as best reply!");
-          window.events.$emit('best-reply-selected', this.data.id);
+          window.events.$emit('best-reply-selected', this.id);
         })
         .catch(error => flash(error.response.data, "danger"));
     }

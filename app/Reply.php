@@ -28,6 +28,7 @@ class Reply extends Model
         self::deleting(function ($reply) {
             $reply->favorites->each->delete();
             $reply->thread->decrement('replies_count');
+            // $reply->thread->update(['best_reply_id' => null]); // taken the database approach, see create_threads migration
         });
 
         self::created(function($reply){

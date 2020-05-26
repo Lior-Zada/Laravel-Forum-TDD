@@ -11,7 +11,7 @@ let authorizations = {
     },
     
     markBestReply(reply){
-        return reply.user_id == user.id;
+        return reply.thread.user_id == user.id;
     }
 };
 

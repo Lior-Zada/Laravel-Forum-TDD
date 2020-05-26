@@ -21,8 +21,15 @@ class CreateThreadsTable extends Migration
             $table->unsignedInteger('replies_count')->default(0);
             $table->string('title');
             $table->text('body');
-            $table->unsignedInteger('best_reply_id')->nullable();
+            $table->unsignedBigInteger('best_reply_id')->nullable();
             $table->timestamps();
+
+            // since it references an id in table replies, this migration has to run after the replies table was created.
+            // therefore i've changed the timestamp of this migration to be higher than the replies.
+            $table->foreign('best_reply_id')
+                ->references('id')
+                ->on('replies')
+                ->onDelete('SET NULL');
         });
     }
 

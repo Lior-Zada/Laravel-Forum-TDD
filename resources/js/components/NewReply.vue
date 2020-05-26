@@ -28,7 +28,6 @@
 import Tribute from "tributejs";
 
 export default {
-  
   data() {
     return {
       body: ""
@@ -36,24 +35,7 @@ export default {
   },
 
   mounted() {
-    // https://github.com/zurb/tribute#a-collection
-    let tribute = new Tribute({
-      lookup: "value",
-      fillAttr: "value",
-
-      // Use Lodash debounce to create a delay between requests.
-      values: _.debounce(this.loadData.bind(this), 750),
-      
-      // Dont display menu when there are no results.
-      noMatchTemplate: function() {
-        return '<span style:"visibility: hidden;"></span>';
-      },
-      
-      // Start searching after 2 keystrokes
-      menuShowMinLength: 2
-    });
-
-    tribute.attach(document.getElementById("body"));
+    this.activateTribute();
   },
 
   methods: {
@@ -77,6 +59,29 @@ export default {
         .catch(error => {
           flash(error.response.data, "danger");
         });
+    },
+
+    activateTribute() {
+      if (!window.App.signedIn) return;
+
+      // https://github.com/zurb/tribute#a-collection
+      let tribute = new Tribute({
+        lookup: "value",
+        fillAttr: "value",
+
+        // Use Lodash debounce to create a delay between requests.
+        values: _.debounce(this.loadData.bind(this), 750),
+
+        // Dont display menu when there are no results.
+        noMatchTemplate: function() {
+          return '<span style:"visibility: hidden;"></span>';
+        },
+
+        // Start searching after 2 keystrokes
+        menuShowMinLength: 2
+      });
+
+      tribute.attach(document.getElementById("body"));
     }
   }
 };
