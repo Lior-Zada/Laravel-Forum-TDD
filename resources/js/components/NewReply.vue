@@ -28,11 +28,7 @@
 import Tribute from "tributejs";
 
 export default {
-  computed: {
-    signedIn() {
-      return window.App.signedIn;
-    }
-  },
+  
   data() {
     return {
       body: ""

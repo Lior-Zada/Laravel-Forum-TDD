@@ -1941,13 +1941,6 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
-    canUpdate: function canUpdate() {
-      var _this = this;
-
-      return this.authorize(function (user) {
-        return user.id === _this.user.id;
-      });
-    },
     ago: function ago() {
       return "Joined" + moment__WEBPACK_IMPORTED_MODULE_0___default()(this.user.created_at).fromNow() + "...";
     }
@@ -2159,11 +2152,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  computed: {
-    signedIn: function signedIn() {
-      return window.App.signedIn;
-    }
-  },
   data: function data() {
     return {
       body: ""
@@ -2430,16 +2418,6 @@ __webpack_require__.r(__webpack_exports__);
     Favorite: _Favorite_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   computed: {
-    signedIn: function signedIn() {
-      return window.App.signedIn;
-    },
-    canUpdate: function canUpdate() {
-      var _this = this;
-
-      return this.authorize(function (user) {
-        return _this.data.user_id == window.App.user.id;
-      }); // return this.data.user_id == window.App.user.id;
-    },
     ago: function ago() {
       return moment__WEBPACK_IMPORTED_MODULE_1___default()(this.data.created_at).fromNow() + "...";
     }
@@ -2449,8 +2427,17 @@ __webpack_require__.r(__webpack_exports__);
       editing: false,
       body: this.data.body,
       id: this.data.id,
-      isBest: false
+      isBest: this.data.isBest,
+      reply: this.data
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    // let all Reply components listen and decide wether they are best reply or not
+    window.events.$on('best-reply-selected', function (id) {
+      return _this.isBest = id == _this.id;
+    });
   },
   methods: {
     update: function update() {
@@ -2479,7 +2466,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post("/replies/".concat(this.data.id, "/best")).then(function (response) {
         flash("Reply marked as best reply!");
-        _this3.isBest = true;
+        window.events.$emit('best-reply-selected', _this3.data.id);
       })["catch"](function (error) {
         return flash(error.response.data, "danger");
       });
@@ -59792,7 +59779,7 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm.canUpdate
+    _vm.authorize("updateAvatar", _vm.user)
       ? _c(
           "form",
           { attrs: { method: "POST", enctype: "multipart/form-data" } },
@@ -60242,7 +60229,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "card-footer level" }, [
-        _vm.canUpdate
+        _vm.authorize("updateReply", _vm.reply)
           ? _c("div", [
               _c(
                 "button",
@@ -60268,8 +60255,8 @@ var render = function() {
             ])
           : _vm._e(),
         _vm._v(" "),
-        _vm.threadOwner
-          ? _c("div", [
+        _vm.authorize("markBestReply", _vm.reply)
+          ? _c("div", { staticClass: "ml-auto" }, [
               _c(
                 "button",
                 {
@@ -60281,7 +60268,7 @@ var render = function() {
                       expression: "! isBest"
                     }
                   ],
-                  staticClass: "btn btn-secondary btn-sm ml-auto",
+                  staticClass: "btn btn-secondary btn-sm",
                   on: { click: _vm.markBestReply }
                 },
                 [_vm._v("Best reply")]
@@ -72589,12 +72576,23 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
-Vue.prototype.authorize = function (handler) {
-  // Can add additional admin rights
-  var user = window.App.user;
-  return user ? handler(user) : false;
+var authorizations = __webpack_require__(/*! ./authorizations */ "./resources/js/authorizations.js");
+
+Vue.prototype.authorize = function () {
+  if (!window.App.signedIn) return;
+
+  for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
+    params[_key] = arguments[_key];
+  }
+
+  if (typeof params[0] === 'string') {
+    return authorizations[params[0]](params[1]);
+  }
+
+  return params[0](window.App.user);
 };
 
+Vue.prototype.signedIn = window.App.signedIn;
 window.events = new Vue();
 
 window.flash = function (message) {
@@ -72630,6 +72628,29 @@ Vue.component('thread-view', __webpack_require__(/*! ./pages/Thread.vue */ "./re
 var app = new Vue({
   el: '#app'
 });
+
+/***/ }),
+
+/***/ "./resources/js/authorizations.js":
+/*!****************************************!*\
+  !*** ./resources/js/authorizations.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var user = window.App.user;
+var authorizations = {
+  updateReply: function updateReply(reply) {
+    return reply.user_id == user.id;
+  },
+  updateAvatar: function updateAvatar(userProfile) {
+    return userProfile.id === user.id;
+  },
+  markBestReply: function markBestReply(reply) {
+    return reply.user_id == user.id;
+  }
+};
+module.exports = authorizations;
 
 /***/ }),
 

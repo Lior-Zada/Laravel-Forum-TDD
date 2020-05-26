@@ -1,6 +1,6 @@
 <template>
   <!-- : will treat it as JSON -->
-  <div :id="'reply-' + id" class="card mb-3">
+  <div :id="'reply-' + id" class="card mb-3" :class="isBest ? 'text-white bg-dark' : ''">
     <div class="card-header">
       <div class="level">
         <div class="flex">
@@ -38,9 +38,14 @@
     </div>
 
     <!-- @can('update', $reply) -->
-    <div class="card-footer level" v-if="canUpdate">
-      <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
-      <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>
+    <div class="card-footer level">
+      <div v-if="authorize('updateReply', reply)">
+        <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
+        <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>  
+      </div>
+      <div class="ml-auto" v-if="authorize('markBestReply', reply)">
+        <button class="btn btn-secondary btn-sm" @click="markBestReply" v-show="! isBest">Best reply</button>
+      </div>
     </div>
     <!-- @endcan -->
   </div>
@@ -56,13 +61,6 @@ export default {
   components: { Favorite },
 
   computed: {
-    signedIn() {
-      return window.App.signedIn;
-    },
-    canUpdate() {
-      return this.authorize(user => this.data.user_id == window.App.user.id);
-      // return this.data.user_id == window.App.user.id;
-    },
     ago() {
       return moment(this.data.created_at).fromNow() + "...";
     }
@@ -72,8 +70,15 @@ export default {
     return {
       editing: false,
       body: this.data.body,
-      id: this.data.id
+      id: this.data.id,
+      isBest: this.data.isBest,
+      reply: this.data,
     };
+  },
+
+  created(){
+    // let all Reply components listen and decide wether they are best reply or not
+    window.events.$on('best-reply-selected', id => this.isBest = (id == this.id))
   },
 
   methods: {
@@ -86,9 +91,7 @@ export default {
           this.editing = false;
           flash("Reply updated!");
         })
-        .catch(error => {
-          flash(error.response.data, "danger");
-        });
+        .catch(error => flash(error.response.data, "danger"));
     },
 
     destroy() {
@@ -102,6 +105,16 @@ export default {
       // $(this.$el).fadeOut(300, () => {
       //   flash("Reply Deleted!");
       // });
+    },
+
+    markBestReply() {
+      axios
+        .post(`/replies/${this.data.id}/best`)
+        .then(response => {
+          flash("Reply marked as best reply!");
+          window.events.$emit('best-reply-selected', this.data.id);
+        })
+        .catch(error => flash(error.response.data, "danger"));
     }
   }
 };

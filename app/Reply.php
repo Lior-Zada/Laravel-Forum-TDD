@@ -15,7 +15,7 @@ class Reply extends Model
 
     // Whenever you cast to an array\json, append this custom attribute to it.
     // "favoritesCount" is available in blade when used with php, but when casted to json to pass to Vue component, its not available. 
-    protected $appends = ['favoritesCount', 'isFavorited'];
+    protected $appends = ['favoritesCount', 'isFavorited', 'isBest'];
 
     // This will add these relationships to the reply queries. Always. 
     // We can also use the boot to addGlobalScope to silence it for certain queries. 
@@ -69,5 +69,10 @@ class Reply extends Model
     public function isBest()
     {
         return $this->thread->best_reply_id == $this->id;
+    }
+
+    public function getIsBestAttribute() : bool
+    {
+        return $this->isBest();
     }
 }
