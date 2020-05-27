@@ -28,7 +28,10 @@ Route::get('/threads/create', 'ThreadController@create');
 // override the model route binding from id to 'slug', instead of overloading "getRouteKeyName" method.
 Route::get('/threads/{channel:slug}', 'ThreadController@index'); 
 Route::get('/threads/{channel}/{thread}', 'ThreadController@show');
+Route::patch('/threads/{channel}/{thread}', 'ThreadController@update')->name('threads.update');
 Route::delete('/threads/{channel}/{thread}', 'ThreadController@destroy');
+
+Route::post('/locked-threads/{thread}', 'LockedThreadsController@store')->name('locked-threads.store')->middleware('administrator');
 
 Route::get('/threads/{channel}/{thread}/replies' , 'ReplyController@index');
 Route::post('/threads/{channel}/{thread}/replies' , 'ReplyController@store');

@@ -37,6 +37,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    // this is for basic usage, for more complicated statusses and permissions, use a rules table.
+    public function isAdmin()
+    {
+        return in_array($this->name, ['LiorZada']);
+    }
 
     public function threads()
     {
