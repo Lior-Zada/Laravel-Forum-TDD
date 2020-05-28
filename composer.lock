@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89890b55a3ccedf9fab8407a0fe967be",
+    "content-hash": "0867d002ce8cb577eb2c4d8beb5a7e97",
     "packages": [
         {
             "name": "asm89/stack-cors",

@@ -66,6 +66,12 @@ https://github.com/microsoftarchive/redis/releases
 //help 
 https://laracasts.com/discuss/channels/laravel/verify-redis-to-run-properly-on-laravel-5?page=1
 
+------------- Guzzle - send http requests ---------------
+// https://laravel.com/docs/7.x/http-client
+composer require guzzlehttp/guzzle
+
+
 ------------- NPM ---------------
 //Search for specific lib before downloading it
 npm search tributejs
+

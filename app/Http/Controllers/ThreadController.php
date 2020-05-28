@@ -6,7 +6,9 @@ use App\Channel;
 use App\Thread;
 use App\Filters\ThreadFilter;
 use App\Trending;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ThreadController extends Controller
 {
@@ -20,7 +22,7 @@ class ThreadController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Channel $channel, ThreadFilter $filters, Trending $trending)
-    {   
+    {
         $threads = $this->getThreads($channel, $filters);
 
 
@@ -52,6 +54,18 @@ class ThreadController extends Controller
      */
     public function store(Request $request)
     {
+        $data = [
+            'secret' => config('services.recaptcha.secret'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $_SERVER['REMOTE_ADDR']
+        ];
+        
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', $data);
+
+        if (! $response->json()['success']){
+            throw new Exception('Recaptcha failed');
+        }
+
         $request->validate([
             'title' => 'required|spamfree',
             'body' => 'required|spamfree',
@@ -65,12 +79,12 @@ class ThreadController extends Controller
             'channel_id' => request('channel_id'),
         ]);
 
-        if(request()->wantsJson()){
+        if (request()->wantsJson()) {
             return response($thread, 201);
         }
 
         return redirect($thread->path())
-        ->with('flash', 'Your thread has been published!');
+            ->with('flash', 'Your thread has been published!');
     }
 
     /**
@@ -81,12 +95,12 @@ class ThreadController extends Controller
      */
     public function show($channelId, Thread $thread, Trending $trending)
     {
-        if(auth()->check()){
+        if (auth()->check()) {
             auth()->user()->read($thread);
         }
 
         $trending->push($thread);
-        
+
         $thread->visits()->record();
 
         return view('threads.show', compact('thread'));
@@ -112,7 +126,6 @@ class ThreadController extends Controller
      */
     public function update($channel, Thread $thread)
     {
-        
     }
 
     /**
