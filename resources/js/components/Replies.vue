@@ -7,7 +7,11 @@
 
     <paginator :dataSet="dataSet" @pageChanged="fetch"></paginator>
 
-    <new-reply @created="add"></new-reply>
+    
+    <new-reply @created="add" v-if="! locked"></new-reply>
+    <p v-else>
+      This thread has been locked. Replies are no longer accepted.
+    </p>
   </div>
 </template>
 
@@ -24,11 +28,13 @@ export default {
   data() {
     return {
       dataSet: {},
+      locked: false,
     };
   },
 
   created() {
     this.fetch();
+    window.events.$on('lockThread', () => this.locked = true);
   },
 
   methods: {

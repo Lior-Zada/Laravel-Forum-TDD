@@ -12,6 +12,10 @@ let authorizations = {
     
     markBestReply(reply){
         return reply.thread.user_id == user.id;
+    },
+
+    isAdmin(){
+        return ['LiorZada'].includes(user.name);
     }
 };
 

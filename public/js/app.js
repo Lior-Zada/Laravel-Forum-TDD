@@ -2308,6 +2308,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -2320,11 +2324,17 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      dataSet: {}
+      dataSet: {},
+      locked: false
     };
   },
   created: function created() {
+    var _this = this;
+
     this.fetch();
+    window.events.$on('lockThread', function () {
+      return _this.locked = true;
+    });
   },
   methods: {
     fetch: function fetch(page) {
@@ -2596,15 +2606,32 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['initialRepliesCount'],
+  props: ['dataRepliesCount', 'dataLocked'],
   components: {
     Replies: _components_Replies__WEBPACK_IMPORTED_MODULE_0__["default"],
     SubscribeButton: _components_SubscribeButton__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
-      repliesCount: this.initialRepliesCount
+      repliesCount: this.dataRepliesCount,
+      locked: this.dataLocked
     };
+  },
+  methods: {
+    // There are multiple ways to implement this.
+    // 1. Send it from thread to replies as prop - can get ugly
+    // 2. Register an event that will fire when clicked and listned to on the child component.
+    // 3. (Store pattern) Shared state, create a custom module called ThreadStore which is the single source of truth, both thread and replies components will reference it.
+    // 4. use VueX - formalized design pattern
+    // 5. use the $parent.locked on the replies comp, it will then take the locked state from thread.
+    lockThread: function lockThread() {
+      this.locked = true;
+      window.events.$emit('lockThread');
+      this.persist();
+    } // persist(){
+    //     axios.post('/locked-threads/{thread}')
+    // }
+
   }
 });
 
@@ -60107,7 +60134,13 @@ var render = function() {
         on: { pageChanged: _vm.fetch }
       }),
       _vm._v(" "),
-      _c("new-reply", { on: { created: _vm.add } })
+      !_vm.locked
+        ? _c("new-reply", { on: { created: _vm.add } })
+        : _c("p", [
+            _vm._v(
+              "\n    This thread has been locked. Replies are no longer accepted.\n  "
+            )
+          ])
     ],
     2
   )
@@ -72655,6 +72688,9 @@ var authorizations = {
   },
   markBestReply: function markBestReply(reply) {
     return reply.thread.user_id == user.id;
+  },
+  isAdmin: function isAdmin() {
+    return ['LiorZada'].includes(user.name);
   }
 };
 module.exports = authorizations;
