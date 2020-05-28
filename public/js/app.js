@@ -2325,15 +2325,15 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       dataSet: {},
-      locked: false
+      locked: this.$parent.locked
     };
   },
   created: function created() {
     var _this = this;
 
     this.fetch();
-    window.events.$on('lockThread', function () {
-      return _this.locked = true;
+    window.events.$on('toggleLocked', function () {
+      return _this.locked = !_this.locked;
     });
   },
   methods: {
@@ -2606,15 +2606,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['dataRepliesCount', 'dataLocked'],
+  props: ["thread"],
   components: {
     Replies: _components_Replies__WEBPACK_IMPORTED_MODULE_0__["default"],
     SubscribeButton: _components_SubscribeButton__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
-      repliesCount: this.dataRepliesCount,
-      locked: this.dataLocked
+      repliesCount: this.thread.replies_count,
+      locked: this.thread.locked
     };
   },
   methods: {
@@ -2626,12 +2626,26 @@ __webpack_require__.r(__webpack_exports__);
     // 5. use the $parent.locked on the replies comp, it will then take the locked state from thread.
     lockThread: function lockThread() {
       this.locked = true;
-      window.events.$emit('lockThread');
-      this.persist();
-    } // persist(){
-    //     axios.post('/locked-threads/{thread}')
-    // }
+      window.events.$emit("toggleLocked"); // update child
 
+      this.persistLock();
+    },
+    unlockThread: function unlockThread() {
+      this.locked = false;
+      window.events.$emit("toggleLocked"); // update child
+
+      this.persistUnlock();
+    },
+    persistLock: function persistLock() {
+      axios.post("/locked-threads/".concat(this.thread.slug)).then(function () {
+        return flash("Thread locked!");
+      });
+    },
+    persistUnlock: function persistUnlock() {
+      axios["delete"]("/locked-threads/".concat(this.thread.slug)).then(function () {
+        return flash("Thread unlocked!");
+      });
+    }
   }
 });
 

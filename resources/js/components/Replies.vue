@@ -28,13 +28,13 @@ export default {
   data() {
     return {
       dataSet: {},
-      locked: false,
+      locked: this.$parent.locked,
     };
   },
 
   created() {
     this.fetch();
-    window.events.$on('lockThread', () => this.locked = true);
+    window.events.$on('toggleLocked', () => this.locked = ! this.locked);
   },
 
   methods: {

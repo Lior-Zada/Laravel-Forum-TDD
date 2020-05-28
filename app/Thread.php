@@ -12,7 +12,9 @@ class Thread extends Model
     protected $guarded = [];
     protected $with = ['creator', 'channel'];
     protected $appends = ['isSubscribedTo'];
-
+    protected $casts = [
+        'locked' => 'boolean',
+    ];
     use RecordsActivity;
 
     // laravel knows to trigger automatically
@@ -67,11 +69,6 @@ class Thread extends Model
         event(new ThreadHasNewReply($this, $reply));
   
         return $reply;
-    }
-    
-    public function lock()
-    {
-        $this->update(['locked' => true]);
     }
 
     public function channel()
