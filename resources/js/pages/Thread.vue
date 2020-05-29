@@ -15,7 +15,6 @@ export default {
       body: this.thread.body,
       form: {}, 
       editing: false,
-
     };
   },
 

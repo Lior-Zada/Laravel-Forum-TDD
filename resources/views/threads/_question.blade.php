@@ -22,7 +22,6 @@
             </form>
             @endcan
         </div>
-
     </div>
 </div>
 
@@ -37,10 +36,9 @@
                 </a>
                 posted:
             </div>
-
         </div>
-
     </div>
+
     <div class="card-body">
         <article>
             <h4 v-text="title"></h4>
