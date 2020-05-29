@@ -56,6 +56,21 @@ php artisan make:mail PleaseConfirmYourEmail --markdown="emails.confirm-email"
 // see default laravel and our registered routes 
 php artisan route:list
 
+// Laravel scout
+//https://laravel.com/docs/7.x/scout
+composer require laravel/scout
+php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"
+
+//to use algolia:
+composer require algolia/algoliasearch-client-php:^2.2
+
+// see all commands commands for scout (can use on other things too, like route)
+php artisan list scout 
+
+//import the specified model so that the driver can index it.
+php artisan scout:import App\Thread
+
+
 ------------- REDIS ---------------
 //pull redis
 composer require predis/predis

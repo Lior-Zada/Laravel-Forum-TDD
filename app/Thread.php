@@ -6,6 +6,7 @@ use App\Events\ThreadHasNewReply;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\RecordsActivity;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class Thread extends Model
 {
@@ -15,7 +16,7 @@ class Thread extends Model
     protected $casts = [
         'locked' => 'boolean',
     ];
-    use RecordsActivity;
+    use RecordsActivity, Searchable;
 
     // laravel knows to trigger automatically
     protected static function boot()
