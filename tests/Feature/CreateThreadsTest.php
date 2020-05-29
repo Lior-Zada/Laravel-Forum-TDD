@@ -3,14 +3,30 @@
 namespace Tests\Feature;
 
 use App\Activity;
+use App\Rules\Recaptcha;
 use App\Thread;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Mockery;
 use Tests\TestCase;
 
 class CreateThreadsTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+       
+        // Bind the Recaptcha class to the mock, and makes sure that when reaching for Recaptcha, only the SAME instance will be returned
+        app()->singleton(Recaptcha::class, function(){
+            // Create a copy of Recaptcha class
+            $recaptchaMock = Mockery::mock(Recaptcha::class);
+            // imitate a call to 'passes', bypass it, return true. - so that we dont have to use the google API every time.
+            $recaptchaMock->shouldReceive('passes')->andReturn(true);
+            return $recaptchaMock;
+        });
+    }
 
     public function test_guest_cannot_create_thread()
     {
@@ -37,15 +53,12 @@ class CreateThreadsTest extends TestCase
 
     public function test_user_can_create_thread()
     {
-        $this->signIn();
         // raw() -> instead of make() -> it will return an array of the values. we use make now because we need the instance.
-        $thread = make('App\Thread');
-
-        $response = $this->post(url('threads'), $thread->toArray());
+        $response = $this->publishThread(['title' => 'TestTitle', 'body' => 'TestBody']);
 
         $this->get($response->headers->get('Location'))
-            ->assertSee($thread->title)
-            ->assertSee($thread->body);
+            ->assertSee('TestTitle')
+            ->assertSee('TestBody');
     }
 
     public function test_unauthorized_user_cannot_delete_threads()
@@ -97,7 +110,7 @@ class CreateThreadsTest extends TestCase
         
         $this->assertEquals($thread->fresh()->slug, 'test-title');
 
-        $thread = $this->postJson('threads', $thread->toArray())->json();
+        $thread = $this->postJson('threads', $thread->toArray() + ['g-recaptcha-response' => 'test'])->json();
         
         $this->assertEquals("test-title-{$thread['id']}", $thread['slug']);
     }
@@ -108,9 +121,19 @@ class CreateThreadsTest extends TestCase
 
         $thread = create('App\Thread', ['title' => 'Test title 42']);
 
-        $thread = $this->postJson('threads', $thread->toArray())->json();
+        $thread = $this->postJson('threads', $thread->toArray() + ['g-recaptcha-response' => 'test'])->json();
 
         $this->assertEquals("test-title-42-{$thread['id']}", $thread['slug']);
+    }
+
+    
+    public function test_requires_to_pass_recaptcha_validation()
+    {
+        // unbind the singleton we made in the setUp
+        unset(app()[Recaptcha::class]);
+
+        $this->publishThread(['g-recaptcha-response' => 'testing'])
+            ->assertSessionHasErrors(['g-recaptcha-response']);
     }
 
     public function test_a_thread_requires_a_valid_channel_id()
@@ -132,6 +155,6 @@ class CreateThreadsTest extends TestCase
         $this->signIn();
         $thread = make('App\Thread', $overrides);
 
-        return $this->post(url('threads'), $thread->toArray());
+        return $this->post(url('threads'), $thread->toArray() + ['g-recaptcha-response' => 'test']);
     }
 }

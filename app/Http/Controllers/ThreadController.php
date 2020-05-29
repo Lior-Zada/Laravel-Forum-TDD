@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Channel;
 use App\Thread;
 use App\Filters\ThreadFilter;
+use App\Rules\Recaptcha;
 use App\Trending;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class ThreadController extends Controller
 {
@@ -52,24 +51,13 @@ class ThreadController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Recaptcha $recaptcha)
     {
-        $data = [
-            'secret' => config('services.recaptcha.secret'),
-            'response' => $request->input('g-recaptcha-response'),
-            'remoteip' => $_SERVER['REMOTE_ADDR']
-        ];
-        
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', $data);
-
-        if (! $response->json()['success']){
-            throw new Exception('Recaptcha failed');
-        }
-
         $request->validate([
             'title' => 'required|spamfree',
             'body' => 'required|spamfree',
             'channel_id' => 'required|exists:channels,id',
+            'g-recaptcha-response' => ['required', $recaptcha]
         ]);
 
         $thread = Thread::create([
