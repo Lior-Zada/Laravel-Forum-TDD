@@ -56,7 +56,7 @@ php artisan make:mail PleaseConfirmYourEmail --markdown="emails.confirm-email"
 // see default laravel and our registered routes 
 php artisan route:list
 
-// Laravel scout
+// Laravel scout ---- dont forget to turn it off for the testing environment ----
 //https://laravel.com/docs/7.x/scout
 composer require laravel/scout
 php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"

@@ -23,6 +23,7 @@ Auth::routes(['verify' => true]);
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/threads', 'ThreadController@index');
+Route::get('/threads/search', 'SearchController@show')->name('search.show');
 Route::post('/threads', 'ThreadController@store')->middleware('verified');
 Route::get('/threads/create', 'ThreadController@create');
 // override the model route binding from id to 'slug', instead of overloading "getRouteKeyName" method.

@@ -10,6 +10,22 @@
         </div>
 
         <div class="col-md-4">
+        <div class="card mb-3">
+                <div class="card-header">
+                    Search
+                </div>
+
+                <div class="card-body">
+                    <form action="{{route('search.show')}}" method="GET">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." name="q">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
             @if(count($trending))
             <div class="card">
                 <div class="card-header">
