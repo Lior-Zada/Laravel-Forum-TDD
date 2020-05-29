@@ -10,41 +10,10 @@
         <div class="row">
             <div class="col-md-8">
 
-                <div class="card">
-                    <div class="card-header">
-                        <div class="level">
-                            <div class="flex">
-                                <a href="{{route('profile', $thread->creator)}}">
-                                    <img class="mr-1" src="{{$thread->creator->avatar_path}}" alt="{{$thread->creator->name}}" width="35" height="35">
-                                    {{$thread->creator->name}}
-                                </a>
-                                posted:
-                            </div>
-                            @can('update', $thread)
-                            <form action="{{$thread->path()}}" method="POST">
-                                @csrf
-                                <!-- HTML forms cannot send PUT PATCH OR DELETE, so we use this to tell laravel to alter the method. -->
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Delete thread</button>
-                            </form>
-                            @endcan
-                        </div>
-
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        <article>
-                            <h4>{{$thread->title}}</h4>
-                            <div class="body">{{$thread->body}}</div>
-                        </article>
-                    </div>
-                </div>
+                @include('threads._question')
 
                 <br>
+                
                 <replies @removed="repliesCount--" @added="repliesCount++"></replies>
 
                 <!-- Will use <replies> component instead -->

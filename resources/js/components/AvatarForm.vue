@@ -8,7 +8,7 @@
       </h1>
     </div>
 
-    <form v-if="authorize('updateAvatar', user)" method="POST" enctype="multipart/form-data">
+    <form v-if="authorize('owns', user)" method="POST" enctype="multipart/form-data">
       <!-- You can pass along native attributes to be assigned on the element within, which enables more flexability -->
       <image-upload name="avatar" @loaded="onLoad"></image-upload>
     </form>

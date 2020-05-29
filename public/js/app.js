@@ -2614,8 +2614,15 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       repliesCount: this.thread.replies_count,
-      locked: this.thread.locked
+      locked: this.thread.locked,
+      title: this.thread.title,
+      body: this.thread.body,
+      form: {},
+      editing: false
     };
+  },
+  created: function created() {
+    this.resetForm();
   },
   methods: {
     // There are multiple ways to implement this.
@@ -2645,6 +2652,22 @@ __webpack_require__.r(__webpack_exports__);
       axios["delete"]("/locked-threads/".concat(this.thread.slug)).then(function () {
         return flash("Thread unlocked!");
       });
+    },
+    update: function update() {
+      var _this = this;
+
+      var uri = "/threads/".concat(this.thread.channel.slug, "/").concat(this.thread.slug);
+      axios.patch(uri, this.form).then(function () {
+        flash("Thread updated!");
+        _this.editing = false;
+        _this.title = _this.form.title;
+        _this.body = _this.form.body;
+      });
+    },
+    resetForm: function resetForm() {
+      this.form.title = this.title;
+      this.form.body = this.body;
+      this.editing = false;
     }
   }
 });
@@ -59824,7 +59847,7 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm.authorize("updateAvatar", _vm.user)
+    _vm.authorize("owns", _vm.user)
       ? _c(
           "form",
           { attrs: { method: "POST", enctype: "multipart/form-data" } },
@@ -60279,10 +60302,10 @@ var render = function() {
           : _c("div", { domProps: { innerHTML: _vm._s(_vm.body) } })
       ]),
       _vm._v(" "),
-      _vm.authorize("updateReply", _vm.reply) ||
+      _vm.authorize("owns", _vm.reply) ||
       _vm.authorize("markBestReply", _vm.reply)
         ? _c("div", { staticClass: "card-footer level" }, [
-            _vm.authorize("updateReply", _vm.reply)
+            _vm.authorize("owns", _vm.reply)
               ? _c("div", [
                   _c(
                     "button",
@@ -72694,11 +72717,8 @@ var app = new Vue({
 
 var user = window.App.user;
 var authorizations = {
-  updateReply: function updateReply(reply) {
-    return reply.user_id == user.id;
-  },
-  updateAvatar: function updateAvatar(userProfile) {
-    return userProfile.id === user.id;
+  owns: function owns(model) {
+    return model.user_id === user.id;
   },
   markBestReply: function markBestReply(reply) {
     return reply.thread.user_id == user.id;

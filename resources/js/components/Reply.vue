@@ -38,8 +38,8 @@
     </div>
 
     <!-- @can('update', $reply) -->
-    <div class="card-footer level" v-if="authorize('updateReply', reply) || authorize('markBestReply', reply)">
-      <div v-if="authorize('updateReply', reply)">
+    <div class="card-footer level" v-if="authorize('owns', reply) || authorize('markBestReply', reply)">
+      <div v-if="authorize('owns', reply)">
         <button class="btn btn-primary btn-sm mr-3" @click="editing = true">Edit reply</button>
         <button class="btn btn-danger btn-sm" @click="destroy">Delete reply</button>  
       </div>

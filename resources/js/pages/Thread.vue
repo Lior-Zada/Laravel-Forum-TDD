@@ -10,8 +10,17 @@ export default {
   data() {
     return {
       repliesCount: this.thread.replies_count,
-      locked: this.thread.locked
+      locked: this.thread.locked,
+      title: this.thread.title,
+      body: this.thread.body,
+      form: {}, 
+      editing: false,
+
     };
+  },
+
+  created(){
+    this.resetForm();
   },
 
   methods: {
@@ -43,6 +52,22 @@ export default {
       axios
         .delete(`/locked-threads/${this.thread.slug}`)
         .then(() => flash("Thread unlocked!"));
+    },
+
+    update() {
+      let uri = `/threads/${this.thread.channel.slug}/${this.thread.slug}`;
+      axios.patch(uri, this.form).then(() => {
+        flash("Thread updated!");
+        this.editing = false;
+        this.title = this.form.title;
+        this.body = this.form.body;
+      });
+    },
+
+    resetForm() {
+      this.form.title = this.title;
+      this.form.body = this.body;
+      this.editing = false;
     }
   }
 };
