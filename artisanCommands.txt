@@ -85,6 +85,8 @@ https://laracasts.com/discuss/channels/laravel/verify-redis-to-run-properly-on-l
 // https://laravel.com/docs/7.x/http-client
 composer require guzzlehttp/guzzle
 
+// An HTML Purifier / Sanitizer for Laravel https://github.com/stevebauman/purify
+composer require stevebauman/purify
 
 ------------- NPM ---------------
 //Search for specific lib before downloading it

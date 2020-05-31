@@ -4,7 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-
+use Stevebauman\Purify\Facades\Purify;
 
 class Reply extends Model
 {
@@ -75,5 +75,10 @@ class Reply extends Model
     public function getIsBestAttribute() : bool
     {
         return $this->isBest();
+    }
+
+    public function getBodyAttribute()
+    {
+        return Purify::clean( $this->attributes['body']);
     }
 }

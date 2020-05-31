@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\RecordsActivity;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Stevebauman\Purify\Facades\Purify;
 
 class Thread extends Model
 {
@@ -132,6 +133,11 @@ class Thread extends Model
             $slug = "{$slug}-{$this->id}";
         }
         $this->attributes['slug'] = $slug;
+    }
+
+    public function getBodyAttribute()
+    {
+        return Purify::clean( $this->attributes['body']);
     }
 
     public function markBestReply(Reply $reply)
