@@ -64,7 +64,7 @@ class Reply extends Model
     }
 
     public function setBodyAttribute($body){
-        $this->attributes['body'] = htmlspecialchars_decode( preg_replace("/\@([\w\-]+)/", '<a href="/profile/$1">$0</a>', $body));
+        $this->attributes['body'] = htmlspecialchars_decode( preg_replace("/\@([\w\-]+)/", '<a href="/profiles/$1">$0</a>', $body));
     }
 
     public function isBest()

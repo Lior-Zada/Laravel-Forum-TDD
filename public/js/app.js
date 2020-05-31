@@ -7359,6 +7359,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -7411,7 +7416,14 @@ __webpack_require__.r(__webpack_exports__);
         // Start searching after 2 keystrokes
         menuShowMinLength: 2
       });
-      tribute.attach(document.getElementById("body"));
+      tribute.attach($("trix-editor"));
+      var editor = $("trix-editor")[0].editor;
+
+      if (editor != null) {
+        editor.composition.delegate.inputController.events.keypress = function () {};
+
+        editor.composition.delegate.inputController.events.keydown = function () {};
+      }
     }
   }
 });
@@ -89964,7 +89976,7 @@ var render = function() {
           [
             _c("div", { staticClass: "flex" }, [
               _c("a", {
-                attrs: { href: "/profile/" + _vm.reply.owner.name },
+                attrs: { href: "/profiles/" + _vm.reply.owner.name },
                 domProps: { textContent: _vm._s(_vm.reply.owner.name) }
               }),
               _vm._v("\n        replied\n        "),

@@ -9,8 +9,13 @@
           placeholder="Write a reply..."
           rows="5"
           v-model="body"
-        ></textarea> -->
-        <wysiwyg name="body" v-model="body" placeholder="Write a reply..." :shouldChange="completed"></wysiwyg>
+        ></textarea>-->
+        <wysiwyg
+          name="body"
+          v-model="body"
+          placeholder="Write a reply..."
+          :shouldChange="completed"
+        ></wysiwyg>
       </div>
 
       <button type="submit" class="btn btn-lg btn-success" @click="addReply">Post</button>
@@ -84,7 +89,12 @@ export default {
         menuShowMinLength: 2
       });
 
-      tribute.attach(document.getElementById("body"));
+      tribute.attach($("trix-editor"));
+      var editor = $("trix-editor")[0].editor;
+      if (editor != null) {
+        editor.composition.delegate.inputController.events.keypress = function() {};
+        editor.composition.delegate.inputController.events.keydown = function() {};
+      }
     }
   }
 };
