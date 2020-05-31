@@ -26,7 +26,8 @@
       <div v-if="editing">
         <form @submit.prevent="update">
           <div class="form-group">
-            <textarea name="body" id="body" class="form-control" v-model="body" required></textarea>
+            <wysiwyg name="body" v-model="body" ></wysiwyg>
+            <!-- <textarea name="body" id="body" class="form-control" v-model="body" required></textarea> -->
           </div>
           <div class="level">
             <button class="btn btn-primary btn-sm" type="submit">Update</button>

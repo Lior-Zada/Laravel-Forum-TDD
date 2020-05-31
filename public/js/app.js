@@ -7358,11 +7358,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      body: ""
+      body: "",
+      completed: false
     };
   },
   mounted: function mounted() {
@@ -7386,6 +7388,7 @@ __webpack_require__.r(__webpack_exports__);
         body: this.body
       }).then(function (response) {
         _this.body = "";
+        _this.completed = true;
         flash("Your reply was posted successfully.");
 
         _this.$emit("created", response.data);
@@ -7579,6 +7582,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Favorite_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Favorite.vue */ "./resources/js/components/Favorite.vue");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+//
 //
 //
 //
@@ -7857,12 +7861,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['name', 'value'],
+  props: ['name', 'value', 'placeholder', 'shouldChange'],
   mounted: function mounted() {
     var _this = this;
 
     this.$refs.trix.addEventListener('trix-change', function (e) {
       _this.$emit('input', e.target.innerHTML);
+    }), this.$watch('shouldChange', function () {
+      _this.$refs.trix.value = '';
     });
   }
 });
@@ -89720,34 +89726,27 @@ var render = function() {
   return _c("div", [
     _vm.signedIn
       ? _c("div", [
-          _c("div", { staticClass: "form-group" }, [
-            _c("textarea", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("wysiwyg", {
+                attrs: {
+                  name: "body",
+                  placeholder: "Write a reply...",
+                  shouldChange: _vm.completed
+                },
+                model: {
                   value: _vm.body,
+                  callback: function($$v) {
+                    _vm.body = $$v
+                  },
                   expression: "body"
                 }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                name: "body",
-                id: "body",
-                placeholder: "Write a reply...",
-                rows: "5"
-              },
-              domProps: { value: _vm.body },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.body = $event.target.value
-                }
-              }
-            })
-          ]),
+              })
+            ],
+            1
+          ),
           _vm._v(" "),
           _c(
             "button",
@@ -89994,29 +89993,23 @@ var render = function() {
                   }
                 },
                 [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c("textarea", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("wysiwyg", {
+                        attrs: { name: "body" },
+                        model: {
                           value: _vm.body,
+                          callback: function($$v) {
+                            _vm.body = $$v
+                          },
                           expression: "body"
                         }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { name: "body", id: "body", required: "" },
-                      domProps: { value: _vm.body },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.body = $event.target.value
-                        }
-                      }
-                    })
-                  ]),
+                      })
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
                   _c("div", { staticClass: "level" }, [
                     _c(
@@ -90249,7 +90242,10 @@ var render = function() {
         domProps: { value: _vm.value }
       }),
       _vm._v(" "),
-      _c("trix-editor", { ref: "trix", attrs: { input: "trix" } })
+      _c("trix-editor", {
+        ref: "trix",
+        attrs: { input: "trix", placeholder: _vm.placeholder }
+      })
     ],
     1
   )
