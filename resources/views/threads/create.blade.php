@@ -43,7 +43,8 @@
 
                         <div class="form-group">
                             <label for="body">Body:</label>
-                            <textarea type="text" class="form-control" rows="8" name="body" id="body" required>{{old('body')}}</textarea>
+                            <wysiwyg name="body"></wysiwyg>
+                            <!-- <textarea type="text" class="form-control" rows="8" name="body" id="body" required>{{old('body')}}</textarea> -->
                         </div>
 
                         <div class="g-recaptcha form-group" data-sitekey="6LfIQ_0UAAAAAHSF924fexDnRJds_T8QUIsoQBDT"></div>

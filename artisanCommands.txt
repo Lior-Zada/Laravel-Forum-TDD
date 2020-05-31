@@ -90,3 +90,5 @@ composer require guzzlehttp/guzzle
 //Search for specific lib before downloading it
 npm search tributejs
 
+// rich wysiwyg
+npm install trix

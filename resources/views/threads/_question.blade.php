@@ -6,7 +6,8 @@
     </div>
 
     <div class="card-body">
-        <textarea rows="5" id="body" class="form-control" v-model="form.body"></textarea>
+        <wysiwyg  v-model="form.body" value="form.body"></wysiwyg>
+        <!-- <textarea rows="5" id="body" class="form-control" v-model="form.body"></textarea> -->
     </div>
 
     <div class="card-footer">
@@ -42,7 +43,7 @@
     <div class="card-body">
         <article>
             <h4 v-text="title"></h4>
-            <div class="body" v-text="body"></div>
+            <div class="body" v-html="body"></div>
         </article>
     </div>
 
