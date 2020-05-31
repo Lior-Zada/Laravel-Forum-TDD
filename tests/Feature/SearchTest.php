@@ -22,7 +22,7 @@ class SearchTest extends TestCase
 
         do {
             sleep(.25);
-            $results = $this->getJson("/threads/search?q=$keyword")->json()['data'];
+            $results = $this->getJson("/threads/search?query=$keyword")->json()['data'];
         } while (empty($results));
 
         $this->assertCount(2, $results);

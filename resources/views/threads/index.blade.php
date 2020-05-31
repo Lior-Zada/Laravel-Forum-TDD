@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <form action="{{route('search.show')}}" method="GET">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." name="q">
+                        <input type="text" class="form-control" placeholder="Search..." name="query">
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-sm">Search</button>

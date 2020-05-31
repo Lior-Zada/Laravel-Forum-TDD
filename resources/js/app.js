@@ -8,6 +8,11 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+// Integrate vue UI for algolia
+// https://www.algolia.com/doc/guides/building-search-ui/installation/vue/
+import InstantSearch from 'vue-instantsearch';
+Vue.use(InstantSearch);
+
 let authorizations = require('./authorizations');
 
 Vue.prototype.authorize = function(...params){
@@ -46,6 +51,7 @@ Vue.component('paginator', require('./components/Paginator.vue').default);
 Vue.component('user-notifications', require('./components/UserNotifications.vue').default);
 Vue.component('avatar-form', require('./components/AvatarForm.vue').default);
 
+Vue.component('search-view', require('./components/Search.vue').default);
 Vue.component('thread-view', require('./pages/Thread.vue').default);
 
 /**

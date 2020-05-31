@@ -9,15 +9,14 @@ class SearchController extends Controller
 {
     public function show(Trending $trending)
     {
-        $threads = Thread::search(request('q'))->paginate(25);
-
+        
         if (request()->expectsJson()){
-            return $threads;
+            return Thread::search(request('query'))->paginate(25);
         }
 
-        return view('Threads.index', [
-            'threads' => $threads,
+        return view('Threads.search', [
             'trending' => $trending->get(),
+            'config' => json_encode(['appId' => config('scout.algolia.id'), 'searchKey' => config('scout.algolia.searchKey') ])
         ]);
     }
 }
